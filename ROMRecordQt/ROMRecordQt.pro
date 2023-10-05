@@ -11,11 +11,11 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    netigdb.cpp
+    networkrequestmanager.cpp
 
 HEADERS += \
     mainwindow.h \
-    netigdb.h
+    networkrequestmanager.h
 
 FORMS += \
     mainwindow.ui
