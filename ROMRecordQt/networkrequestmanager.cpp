@@ -13,7 +13,7 @@ void NetworkRequestManager::sendSearchRequest(const QString& search)
     request.setHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
     request.setRawHeader("x-api-key", "DwqGnrnS3CbBHegC6TzA4sHNlKGnq4w79eD8vW43");
 
-    QString fullInput = QString("search \"%1\"; fields name;").arg(search);
+    QString fullInput = QString("search \"%1\"; fields name; limit 500;").arg(search);
     qDebug() << fullInput;
 
     QByteArray postData(fullInput.toUtf8());

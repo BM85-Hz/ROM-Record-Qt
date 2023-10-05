@@ -2,10 +2,17 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLineEdit>
+#include <QPlainTextEdit>
+#include <QVBoxLayout>
+#include "networkrequestmanager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
+
+//class QLineEdit;
+//class QPlainTextEdit;
 
 class MainWindow : public QMainWindow
 {
@@ -17,5 +24,13 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QLineEdit* searchLineEdit;
+    QPlainTextEdit* resultTextEdit;
+    NetworkRequestManager requestManager;
+
+private slots:
+    void handleSearchResult(const QByteArray& result);
+    void handleSearchError(const QString& error);
+    void executeSearch();
 };
 #endif // MAINWINDOW_H

@@ -30,9 +30,9 @@ int main(int argc, char* argv[])
     });
 
     // Send a search request
-    requestManager.sendSearchRequest("mario world");
-    requestManager.sendSearchRequest("zelda");
-    requestManager.sendSearchRequest("metroid");
+    //requestManager.sendSearchRequest("mario world");
+    //requestManager.sendSearchRequest("zelda");
+    //requestManager.sendSearchRequest("metroid");
 
     MainWindow window;
     window.show();
