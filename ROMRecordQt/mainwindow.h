@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QLineEdit>
-#include <QPlainTextEdit>
+#include <QListWidget>
 #include <QVBoxLayout>
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -25,7 +25,7 @@ public:
 private:
     Ui::MainWindow *ui;
     QLineEdit* searchLineEdit;
-    QPlainTextEdit* resultTextEdit;
+    QListWidget* resultListWidget;
     NetworkRequestManager requestManager;
 
 private slots:

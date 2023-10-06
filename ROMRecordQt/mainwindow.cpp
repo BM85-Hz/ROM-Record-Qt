@@ -7,8 +7,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     searchLineEdit = new QLineEdit(this);
-    resultTextEdit = new QPlainTextEdit(this);
-    setCentralWidget(resultTextEdit);
+    resultListWidget = new QListWidget(this);
+    setCentralWidget(resultListWidget);
 
     // Connect signals and slots
     connect(&requestManager, &NetworkRequestManager::searchResult, this, &MainWindow::handleSearchResult);
@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Widget layout (subject to change)
     QVBoxLayout* layout = new QVBoxLayout;
     layout->addWidget(searchLineEdit);
-    layout->addWidget(resultTextEdit);
+    layout->addWidget(resultListWidget);
     QWidget* centralWidget = new QWidget;
     centralWidget->setLayout(layout);
     setCentralWidget(centralWidget);
@@ -39,7 +39,7 @@ void MainWindow::handleSearchResult(const QByteArray& result)
     // Parse the JSON response
     QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
     if (!jsonResponse.isArray()) {
-        resultTextEdit->setPlainText("Invalid JSON response.");
+        resultListWidget->addItem("Invalid JSON response.");
         return;
     }
 
@@ -55,14 +55,18 @@ void MainWindow::handleSearchResult(const QByteArray& result)
         }
     }
 
-    // Display the names in the text widget
-    resultTextEdit->setPlainText(namesList.join("\n"));
+    // Clear the existing list items
+    resultListWidget->clear();
+
+    // Add the names to the list widget
+    resultListWidget->addItems(namesList);
 }
 
 void MainWindow::handleSearchError(const QString& error)
 {
     // Handle and display the search error
-    resultTextEdit->setPlainText("Error: " + error);
+    resultListWidget->clear();
+    resultListWidget->addItem("Error: " + error);
 }
 
 void MainWindow::executeSearch()
