@@ -5,6 +5,9 @@
 #include <QLineEdit>
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonArray>
 #include "networkrequestmanager.h"
 
 QT_BEGIN_NAMESPACE

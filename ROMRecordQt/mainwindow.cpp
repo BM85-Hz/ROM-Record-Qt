@@ -36,8 +36,27 @@ MainWindow::~MainWindow()
 
 void MainWindow::handleSearchResult(const QByteArray& result)
 {
-    // Display search results in the text widget
-    resultTextEdit->setPlainText(result);
+    // Parse the JSON response
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
+    if (!jsonResponse.isArray()) {
+        resultTextEdit->setPlainText("Invalid JSON response.");
+        return;
+    }
+
+    // Extract the names from the JSON array
+    QJsonArray jsonArray = jsonResponse.array();
+    QStringList namesList;
+    for (const QJsonValue& value : jsonArray) {
+        if (value.isObject()) {
+            QJsonObject obj = value.toObject();
+            if (obj.contains("name")) {
+                namesList.append(obj["name"].toString());
+            }
+        }
+    }
+
+    // Display the names in the text widget
+    resultTextEdit->setPlainText(namesList.join("\n"));
 }
 
 void MainWindow::handleSearchError(const QString& error)

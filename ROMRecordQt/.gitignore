@@ -1,6 +1,7 @@
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 
+build-ROMRecordQt-Desktop_Qt_6_5_2_MinGW_64_bit-Debug/
 *~
 *.autosave
 *.a
