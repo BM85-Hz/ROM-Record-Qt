@@ -10,9 +10,11 @@ void NetworkRequestManager::sendSearchRequest(const QString& search)
     const QUrl url("https://lnattp9ct5.execute-api.us-west-2.amazonaws.com/production/v4/games");
     QNetworkRequest request(url);
 
+    // Bad form to have IGDB API key hardcoded, but eh
     request.setHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
     request.setRawHeader("x-api-key", "DwqGnrnS3CbBHegC6TzA4sHNlKGnq4w79eD8vW43");
 
+    // Puts search query into full POST request body
     QString fullInput = QString("search \"%1\"; fields name; limit 500;").arg(search);
     qDebug() << fullInput;
 

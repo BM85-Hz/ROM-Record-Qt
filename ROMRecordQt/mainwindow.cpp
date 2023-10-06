@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Set placeholder text for the search input field
     searchLineEdit->setPlaceholderText("Search Game");
 
-    // Widget layout
+    // Widget layout (subject to change)
     QVBoxLayout* layout = new QVBoxLayout;
     layout->addWidget(searchLineEdit);
     layout->addWidget(resultTextEdit);
