@@ -22,15 +22,16 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void handleSearchResult(const QByteArray& result);
+    void handleSearchError(const QString& error);
+    void executeSearch();
+    void requestGameDetails(const QString& gameId);
+
 private:
     Ui::MainWindow *ui;
     QLineEdit* searchLineEdit;
     QListWidget* resultListWidget;
     NetworkRequestManager requestManager;
-
-private slots:
-    void handleSearchResult(const QByteArray& result);
-    void handleSearchError(const QString& error);
-    void executeSearch();
 };
 #endif // MAINWINDOW_H

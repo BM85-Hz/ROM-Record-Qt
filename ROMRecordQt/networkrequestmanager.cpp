@@ -18,10 +18,28 @@ void NetworkRequestManager::sendSearchRequest(const QString& search)
     QString fullInput = QString("search \"%1\"; fields name; limit 500;").arg(search);
     qDebug() << fullInput;
 
-    QByteArray postData(fullInput.toUtf8());
+    QByteArray postData{fullInput.toUtf8()};
 
     QNetworkReply* reply = manager.post(request, postData);
 
+    connect(reply, &QNetworkReply::finished, this, &NetworkRequestManager::handleNetworkReply);
+}
+
+void NetworkRequestManager::sendGameDetailsRequest(const QString& requestString)
+{
+    qDebug() << requestString;
+
+    // Construct and send the game details request
+    const QUrl url("https://lnattp9ct5.execute-api.us-west-2.amazonaws.com/production/v4/games");
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
+    request.setRawHeader("x-api-key", "DwqGnrnS3CbBHegC6TzA4sHNlKGnq4w79eD8vW43");
+
+    QByteArray postData{requestString.toUtf8()};
+
+    QNetworkReply *reply = manager.post(request, postData);
+
+    // Connect a slot to handle the reply
     connect(reply, &QNetworkReply::finished, this, &NetworkRequestManager::handleNetworkReply);
 }
 

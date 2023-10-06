@@ -11,10 +11,12 @@ class NetworkRequestManager : public QObject
     Q_OBJECT
 
 public:
-    NetworkRequestManager(QObject* parent = nullptr);
+    explicit NetworkRequestManager(QObject* parent = nullptr);
+    QList<int> gameIds;
 
 public slots:
     void sendSearchRequest(const QString& search);
+    void sendGameDetailsRequest(const QString& requestString);
 
 private slots:
     void handleNetworkReply();
@@ -22,6 +24,8 @@ private slots:
 signals:
     void searchResult(const QByteArray& result);
     void searchError(const QString& error);
+    void gameDetailsResult(const QByteArray& result);
+    void gameDetailsError(const QString& error);
 
 private:
     QNetworkAccessManager manager;
