@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&requestManager, &NetworkRequestManager::searchError, this, &MainWindow::handleSearchError);
     connect(&requestManager, &NetworkRequestManager::gameDetailsResult, this, &MainWindow::handleDetailsResult);
     connect(&requestManager, &NetworkRequestManager::platformResult, this, &MainWindow::handlePlatformsResult);
+    connect(&requestManager, &NetworkRequestManager::companyResult, this, &MainWindow::handleCompaniesResult);
 
     // Connect the returnPressed signal of the searchLineEdit to executeSearch slot
     connect(searchLineEdit, &QLineEdit::returnPressed, this, &MainWindow::executeSearch);
@@ -149,8 +150,9 @@ void MainWindow::handleDetailsResult(const QByteArray& result)
             QJsonArray platform_IDs = obj["platforms"].toArray();
                 requestManager.handlePlatforms(platform_IDs);
 
-            QString involved_companies = obj["involved_companies"].toString();
-                //requestManager.handleCompanies(company_IDs);
+            QJsonArray company_IDs = obj["involved_companies"].toArray();
+                qDebug() << company_IDs;
+                requestManager.handleInvolvedCompanies(company_IDs);
 
             QString age_ratings = obj["age_ratings"].toString();
             QString genres = obj["genres"].toString();
@@ -159,11 +161,12 @@ void MainWindow::handleDetailsResult(const QByteArray& result)
 
             // Format the information and append it to the Text Browser
             if (!platforms.isEmpty()){
-                QString formattedInfo = QString("%1\n\nPlatforms:\n%2\nOriginal Release Date: %3\n\nCompanies: %4\n\n"
+                QString formattedInfo = QString("%1\n\nPlatforms:\n%2\nOriginal Release Date: %3\n\nCompanies:\n%4\n"
                                                 "Age Ratings: %5\n\nGenres: %6\n\nSummary:\n%7\n\n")
-                                            .arg(name, platforms, first_release_date, involved_companies, age_ratings, genres, summary);
+                                            .arg(name, platforms, first_release_date, companies, age_ratings, genres, summary);
                 textBrowserWidget->append(formattedInfo);
                 platforms.clear();
+                companies.clear();
             }
         }
     }
@@ -177,5 +180,16 @@ void MainWindow::handlePlatformsResult(const QByteArray& result){
         QJsonObject obj = value.toObject();
         platforms.append(obj["name"].toString());
         platforms.append("\n");
+    }
+}
+
+void MainWindow::handleCompaniesResult(const QByteArray& result){
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
+    QJsonArray jsonArray = jsonResponse.array();
+    const QJsonValue& value = jsonArray.at(0);
+    if (value.isObject()) {
+        QJsonObject obj = value.toObject();
+        companies.append(obj["name"].toString());
+        companies.append("\n");
     }
 }

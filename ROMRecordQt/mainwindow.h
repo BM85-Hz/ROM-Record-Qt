@@ -28,6 +28,7 @@ private slots:
     void handleSearchError(const QString& error);
     void handleDetailsResult(const QByteArray& result);
     void handlePlatformsResult(const QByteArray& result);
+    void handleCompaniesResult(const QByteArray& result);
     void executeSearch();
     void requestGameDetails(const QString& gameId);
 
@@ -39,5 +40,6 @@ private:
     NetworkRequestManager requestManager;
 
     QString platforms;
+    QString companies;
 };
 #endif // MAINWINDOW_H

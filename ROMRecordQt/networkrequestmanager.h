@@ -6,6 +6,8 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 class NetworkRequestManager : public QObject
 {
@@ -20,11 +22,14 @@ public slots:
     void sendSearchRequest(const QString& search);
     void sendGameDetailsRequest(const QString& requestString);
     void handlePlatforms(QJsonArray platform_IDs);
+    void handleInvolvedCompanies(QJsonArray company_IDs);
+    void handleCompanies();
 
 private slots:
     void handleSearchReply();
     void handleDetailsReply();
     void handlePlatformReply();
+    void handleCompanyReply();
 
 signals:
     void searchResult(const QByteArray& result);
@@ -32,6 +37,7 @@ signals:
     void gameDetailsResult(const QByteArray& result);
     void gameDetailsError(const QString& error);
     void platformResult(const QByteArray& result);
+    void companyResult(const QByteArray& result);
 
 private:
     QNetworkAccessManager manager;
