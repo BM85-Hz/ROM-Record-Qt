@@ -8,11 +8,14 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     searchLineEdit = new QLineEdit(this);
     resultListWidget = new QListWidget(this);
+    textBrowserWidget = new QTextBrowser(this);
     setCentralWidget(resultListWidget);
 
     // Connect signals and slots
     connect(&requestManager, &NetworkRequestManager::searchResult, this, &MainWindow::handleSearchResult);
     connect(&requestManager, &NetworkRequestManager::searchError, this, &MainWindow::handleSearchError);
+    connect(&requestManager, &NetworkRequestManager::gameDetailsResult, this, &MainWindow::handleDetailsResult);
+    connect(&requestManager, &NetworkRequestManager::platformResult, this, &MainWindow::handlePlatformsResult);
 
     // Connect the returnPressed signal of the searchLineEdit to executeSearch slot
     connect(searchLineEdit, &QLineEdit::returnPressed, this, &MainWindow::executeSearch);
@@ -33,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     QVBoxLayout* layout = new QVBoxLayout;
     layout->addWidget(searchLineEdit);
     layout->addWidget(resultListWidget);
+    layout->addWidget(textBrowserWidget);
     QWidget* centralWidget = new QWidget;
     centralWidget->setLayout(layout);
     setCentralWidget(centralWidget);
@@ -65,7 +69,7 @@ void MainWindow::handleSearchResult(const QByteArray& result)
             if (obj.contains("id")) {
                 int gameId = obj["id"].toInt();
                 requestManager.gameIds.append(gameId);
-                qDebug() << gameId;
+                //qDebug() << gameId;
             }
 
             if (obj.contains("name")) {
@@ -108,4 +112,73 @@ void MainWindow::requestGameDetails(const QString& gameId)
 
     // Send the game details request using the NetworkRequestManager
     requestManager.sendGameDetailsRequest(gameRequest);
+}
+
+void MainWindow::handleDetailsResult(const QByteArray& result)
+{
+    qDebug() << "Received JSON response:" << result;
+
+    // Parse the JSON response
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
+    if (!jsonResponse.isArray()) {
+        resultListWidget->addItem("Invalid JSON response.");
+        return;
+    }
+
+    // Extract the details from the JSON array
+    QJsonArray jsonArray = jsonResponse.array();
+    if (jsonArray.isEmpty()) {
+        resultListWidget->addItem("No data available.");
+        return;
+    }
+
+    // Clear the existing content in the Text Browser
+    textBrowserWidget->clear();
+
+    // Iterate over the JSON array and append details to the Text Browser
+    for (const QJsonValue& value : jsonArray) {
+        if (value.isObject()) {
+            QJsonObject obj = value.toObject();
+
+            QString name = obj["name"].toString();
+            //add cover here
+            qint64 unixTimestamp = obj["first_release_date"].toInt(); // Timestamp is in Unix Time
+                QDateTime dateTime = QDateTime::fromSecsSinceEpoch(unixTimestamp);
+                QString first_release_date = dateTime.toString("yyyy-MM-dd");
+
+            QJsonArray platform_IDs = obj["platforms"].toArray();
+                requestManager.handlePlatforms(platform_IDs);
+                qDebug() << platforms;
+
+            QString involved_companies = obj["involved_companies"].toString();
+            QString age_ratings = obj["age_ratings"].toString();
+            QString genres = obj["genres"].toString();
+            QString summary = obj["summary"].toString();
+            //screenshots here
+
+            // Format the information and append it to the Text Browser
+            QString formattedInfo = QString("%1\n\nPlatforms: %2\n\nOriginal Release Date: %3\n\nCompanies: %4\n\n"
+                                            "Age Ratings: %5\n\nGenres: %6\n\nSummary:\n%7\n\n")
+                                        .arg(name, platforms, first_release_date, involved_companies, age_ratings, genres, summary);
+            textBrowserWidget->append(formattedInfo);
+
+            platforms = {};
+        }
+    }
+}
+
+void MainWindow::handlePlatformsResult(const QByteArray& result){
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
+
+    QJsonArray jsonArray = jsonResponse.array();
+    for (int i = 0; i < jsonArray.size(); ++i) {
+        const QJsonValue& value = jsonArray.at(i);
+        if (value.isObject()) {
+            QJsonObject obj = value.toObject();
+            platforms.append(obj["name"].toString());
+            if (i <= jsonArray.size() - 1) {
+                platforms.append(", ");
+            }
+        }
+    }
 }

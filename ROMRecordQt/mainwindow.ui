@@ -23,6 +23,18 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuSearch">
+    <property name="title">
+     <string>Search</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuCalendar">
+    <property name="title">
+     <string>Calendar</string>
+    </property>
+   </widget>
+   <addaction name="menuSearch"/>
+   <addaction name="menuCalendar"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

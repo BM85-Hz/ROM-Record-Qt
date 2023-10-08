@@ -5,6 +5,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QJsonArray>
 
 class NetworkRequestManager : public QObject
 {
@@ -13,19 +14,24 @@ class NetworkRequestManager : public QObject
 public:
     explicit NetworkRequestManager(QObject* parent = nullptr);
     QList<int> gameIds;
+    QNetworkRequest request;
 
 public slots:
     void sendSearchRequest(const QString& search);
     void sendGameDetailsRequest(const QString& requestString);
+    void handlePlatforms(QJsonArray platform_IDs);
 
 private slots:
-    void handleNetworkReply();
+    void handleSearchReply();
+    void handleDetailsReply();
+    void handlePlatformReply();
 
 signals:
     void searchResult(const QByteArray& result);
     void searchError(const QString& error);
     void gameDetailsResult(const QByteArray& result);
     void gameDetailsError(const QString& error);
+    void platformResult(const QByteArray& result);
 
 private:
     QNetworkAccessManager manager;

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QLineEdit>
 #include <QListWidget>
+#include <QTextBrowser>
 #include <QVBoxLayout>
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -25,6 +26,8 @@ public:
 private slots:
     void handleSearchResult(const QByteArray& result);
     void handleSearchError(const QString& error);
+    void handleDetailsResult(const QByteArray& result);
+    void handlePlatformsResult(const QByteArray& result);
     void executeSearch();
     void requestGameDetails(const QString& gameId);
 
@@ -32,6 +35,9 @@ private:
     Ui::MainWindow *ui;
     QLineEdit* searchLineEdit;
     QListWidget* resultListWidget;
+    QTextBrowser* textBrowserWidget;
     NetworkRequestManager requestManager;
+
+    QString platforms;
 };
 #endif // MAINWINDOW_H
