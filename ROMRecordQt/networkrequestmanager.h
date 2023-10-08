@@ -35,6 +35,8 @@ signals:
 
 private:
     QNetworkAccessManager manager;
+    int platformRequests{};
+    int completedPlatformRequests{};
 };
 
 #endif // NETWORKREQUESTMANAGER_H

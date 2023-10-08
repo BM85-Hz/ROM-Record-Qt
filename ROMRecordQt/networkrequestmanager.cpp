@@ -10,6 +10,7 @@ NetworkRequestManager::NetworkRequestManager(QObject* parent) : QObject(parent)
 
 void NetworkRequestManager::sendSearchRequest(const QString& search)
 {
+    gameIds.clear();
     const QUrl url("https://lnattp9ct5.execute-api.us-west-2.amazonaws.com/production/v4/games");
     request.setUrl(url);
 

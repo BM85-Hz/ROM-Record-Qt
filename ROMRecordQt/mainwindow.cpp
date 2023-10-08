@@ -148,37 +148,34 @@ void MainWindow::handleDetailsResult(const QByteArray& result)
 
             QJsonArray platform_IDs = obj["platforms"].toArray();
                 requestManager.handlePlatforms(platform_IDs);
-                qDebug() << platforms;
 
             QString involved_companies = obj["involved_companies"].toString();
+                //requestManager.handleCompanies(company_IDs);
+
             QString age_ratings = obj["age_ratings"].toString();
             QString genres = obj["genres"].toString();
             QString summary = obj["summary"].toString();
             //screenshots here
 
             // Format the information and append it to the Text Browser
-            QString formattedInfo = QString("%1\n\nPlatforms: %2\n\nOriginal Release Date: %3\n\nCompanies: %4\n\n"
-                                            "Age Ratings: %5\n\nGenres: %6\n\nSummary:\n%7\n\n")
-                                        .arg(name, platforms, first_release_date, involved_companies, age_ratings, genres, summary);
-            textBrowserWidget->append(formattedInfo);
-
-            platforms = {};
+            if (!platforms.isEmpty()){
+                QString formattedInfo = QString("%1\n\nPlatforms:\n%2\nOriginal Release Date: %3\n\nCompanies: %4\n\n"
+                                                "Age Ratings: %5\n\nGenres: %6\n\nSummary:\n%7\n\n")
+                                            .arg(name, platforms, first_release_date, involved_companies, age_ratings, genres, summary);
+                textBrowserWidget->append(formattedInfo);
+                platforms.clear();
+            }
         }
     }
 }
 
 void MainWindow::handlePlatformsResult(const QByteArray& result){
     QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
-
     QJsonArray jsonArray = jsonResponse.array();
-    for (int i = 0; i < jsonArray.size(); ++i) {
-        const QJsonValue& value = jsonArray.at(i);
-        if (value.isObject()) {
-            QJsonObject obj = value.toObject();
-            platforms.append(obj["name"].toString());
-            if (i <= jsonArray.size() - 1) {
-                platforms.append(", ");
-            }
-        }
+    const QJsonValue& value = jsonArray.at(0);
+    if (value.isObject()) {
+        QJsonObject obj = value.toObject();
+        platforms.append(obj["name"].toString());
+        platforms.append("\n");
     }
 }
