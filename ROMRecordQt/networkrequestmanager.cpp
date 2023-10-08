@@ -61,7 +61,6 @@ void NetworkRequestManager::handleInvolvedCompanies(QJsonArray company_IDs){ // 
     QString requestString;
     for (auto companyID : company_IDs){
         requestString = QString("where id = %1; fields company;").arg(companyID.toInt());
-        qDebug() << requestString;
         QByteArray postData{requestString.toUtf8()};
         QNetworkReply* reply = manager.post(request, postData);
         connect(reply, &QNetworkReply::finished, this, &NetworkRequestManager::handleCompanies);
@@ -80,16 +79,27 @@ void NetworkRequestManager::handleCompanies(){
     for (auto value : jsonArray){
         if (value.isObject()) {
             QJsonObject obj = value.toObject();
-            qDebug() << obj;
 
             qint64 company = obj["company"].toInt();
 
             requestString = QString("where id = %1; fields name;").arg(company);
-            qDebug() << requestString;
             QByteArray postData{requestString.toUtf8()};
             QNetworkReply* reply = manager.post(request, postData);
             connect(reply, &QNetworkReply::finished, this, &NetworkRequestManager::handleCompanyReply);
         }
+    }
+}
+
+void NetworkRequestManager::handleGenres(QJsonArray genre_IDs){
+    const QUrl url("https://lnattp9ct5.execute-api.us-west-2.amazonaws.com/production/v4/genres");
+    request.setUrl(url);
+
+    QString requestString;
+    for (auto genreID : genre_IDs){
+        requestString = QString("where id = %1; fields name;").arg(genreID.toInt());
+        QByteArray postData{requestString.toUtf8()};
+        QNetworkReply* reply = manager.post(request, postData);
+        connect(reply, &QNetworkReply::finished, this, &NetworkRequestManager::handleGenreReply);
     }
 }
 
@@ -139,4 +149,10 @@ void NetworkRequestManager::handleCompanyReply()
 {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     emit companyResult(reply->readAll());
+}
+
+void NetworkRequestManager::handleGenreReply()
+{
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
+    emit genreResult(reply->readAll());
 }

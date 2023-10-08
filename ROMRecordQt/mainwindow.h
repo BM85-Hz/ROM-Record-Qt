@@ -29,6 +29,7 @@ private slots:
     void handleDetailsResult(const QByteArray& result);
     void handlePlatformsResult(const QByteArray& result);
     void handleCompaniesResult(const QByteArray& result);
+    void handleGenresResult(const QByteArray& result);
     void executeSearch();
     void requestGameDetails(const QString& gameId);
 
@@ -41,5 +42,6 @@ private:
 
     QString platforms;
     QString companies;
+    QString genres;
 };
 #endif // MAINWINDOW_H

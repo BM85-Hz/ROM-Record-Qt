@@ -24,12 +24,14 @@ public slots:
     void handlePlatforms(QJsonArray platform_IDs);
     void handleInvolvedCompanies(QJsonArray company_IDs);
     void handleCompanies();
+    void handleGenres(QJsonArray genre_IDs);
 
 private slots:
     void handleSearchReply();
     void handleDetailsReply();
     void handlePlatformReply();
     void handleCompanyReply();
+    void handleGenreReply();
 
 signals:
     void searchResult(const QByteArray& result);
@@ -38,6 +40,7 @@ signals:
     void gameDetailsError(const QString& error);
     void platformResult(const QByteArray& result);
     void companyResult(const QByteArray& result);
+    void genreResult(const QByteArray& result);
 
 private:
     QNetworkAccessManager manager;
