@@ -9,14 +9,15 @@ MainWindow::MainWindow(QWidget *parent)
     searchLineEdit = new QLineEdit(this);
     resultListWidget = new QListWidget(this);
     textBrowserWidget = new QTextBrowser(this);
-    QLabel* imageLabel = new QLabel(this);
-    imageLabel->setText("No image loaded");
+    imageLabel = new QLabel(this);
+    imageLabel->setText("No cover loaded");
     setCentralWidget(resultListWidget);
 
     // Connect signals and slots
     connect(&requestManager, &NetworkRequestManager::searchResult, this, &MainWindow::handleSearchResult);
     connect(&requestManager, &NetworkRequestManager::searchError, this, &MainWindow::handleSearchError);
     connect(&requestManager, &NetworkRequestManager::gameDetailsResult, this, &MainWindow::handleDetailsResult);
+    connect(&requestManager, &NetworkRequestManager::coverResult, this, &MainWindow::handleCoverResult);
     connect(&requestManager, &NetworkRequestManager::platformResult, this, &MainWindow::handlePlatformsResult);
     connect(&requestManager, &NetworkRequestManager::companyResult, this, &MainWindow::handleCompaniesResult);
     connect(&requestManager, &NetworkRequestManager::genreResult, this, &MainWindow::handleGenresResult);
@@ -148,7 +149,15 @@ void MainWindow::handleDetailsResult(const QByteArray& result)
             QJsonObject obj = value.toObject();
 
             QString name = obj["name"].toString();
-            //add cover here
+
+            if (obj["cover"].toInt()){
+                qint64 cover_ID = obj["cover"].toInt();
+                    requestManager.handleCovers(cover_ID);
+            }
+            else{
+                imageLabel->setText("No cover present");
+            }
+
             qint64 unixTimestamp = obj["first_release_date"].toInt(); // Timestamp is in Unix Time
                 QDateTime dateTime = QDateTime::fromSecsSinceEpoch(unixTimestamp);
                 QString first_release_date = dateTime.toString("yyyy-MM-dd");
@@ -168,7 +177,7 @@ void MainWindow::handleDetailsResult(const QByteArray& result)
             //screenshots here
 
             // Format the information and append it to the Text Browser
-            if (!platforms.isEmpty()){
+            if (!(platforms == QString())){ // Double click check (only works once before changing operation)
                 QString formattedInfo = QString("%1\n\nPlatforms:\n%2\nOriginal Release Date:\n%3\n\n"
                                                 "Companies:\n%4\nGenres:\n%5\nSummary:\n%6\n\n")
                                             .arg(name, platforms, first_release_date, companies, genres, summary);
@@ -177,8 +186,45 @@ void MainWindow::handleDetailsResult(const QByteArray& result)
                 companies.clear();
                 genres.clear();
             }
+            else { textBrowserWidget->append("Click selected game title twice for complete details.");
+                textBrowserWidget->append("(If this doesn't work, then there is likely "
+                                          "no info for this game on IGDB. Feel free to add some!)");
+            }
         }
     }
+}
+
+void MainWindow::handleCoverResult(const QByteArray& result){
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
+    QJsonArray jsonArray = jsonResponse.array();
+    const QJsonValue& value = jsonArray.at(0);
+    if (value.isObject()) {
+        QJsonObject obj = value.toObject();
+        QString url(obj["url"].toString());
+        url = QString("https:%1").arg(url);
+        url.replace("t_thumb", "t_cover_med");
+        qDebug() << url;
+
+        QNetworkAccessManager* imageManager = new QNetworkAccessManager(this);
+        connect(imageManager, &QNetworkAccessManager::finished, this, &MainWindow::handleImageDownloaded);
+        QNetworkRequest imageRequest(url);
+        imageManager->get(imageRequest);
+    }
+}
+
+void MainWindow::handleImageDownloaded(QNetworkReply* reply) {
+    if (reply->error() == QNetworkReply::NoError) {
+        QByteArray imageData = reply->readAll();
+        QPixmap pixmap;
+        pixmap.loadFromData(imageData);
+
+        imageLabel->setPixmap(pixmap);
+    } else {
+        qDebug() << "Error downloading the image:" << reply->errorString();
+        imageLabel->setText("Image download failed");
+    }
+
+    reply->deleteLater();
 }
 
 void MainWindow::handlePlatformsResult(const QByteArray& result){

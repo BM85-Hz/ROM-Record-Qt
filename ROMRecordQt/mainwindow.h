@@ -29,6 +29,8 @@ private slots:
     void handleSearchResult(const QByteArray& result);
     void handleSearchError(const QString& error);
     void handleDetailsResult(const QByteArray& result);
+    void handleCoverResult(const QByteArray& result);
+    void handleImageDownloaded(QNetworkReply* reply);
     void handlePlatformsResult(const QByteArray& result);
     void handleCompaniesResult(const QByteArray& result);
     void handleGenresResult(const QByteArray& result);
@@ -42,8 +44,9 @@ private:
     QTextBrowser* textBrowserWidget;
     NetworkRequestManager requestManager;
 
-    QString platforms;
-    QString companies;
-    QString genres;
+    QLabel* imageLabel{};
+    QString platforms{};
+    QString companies{};
+    QString genres{};
 };
 #endif // MAINWINDOW_H

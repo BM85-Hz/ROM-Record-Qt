@@ -21,6 +21,7 @@ public:
 public slots:
     void sendSearchRequest(const QString& search);
     void sendGameDetailsRequest(const QString& requestString);
+    void handleCovers(qint64 cover_ID);
     void handlePlatforms(QJsonArray platform_IDs);
     void handleInvolvedCompanies(QJsonArray company_IDs);
     void handleCompanies();
@@ -29,6 +30,7 @@ public slots:
 private slots:
     void handleSearchReply();
     void handleDetailsReply();
+    void handleCoverReply();
     void handlePlatformReply();
     void handleCompanyReply();
     void handleGenreReply();
@@ -38,6 +40,7 @@ signals:
     void searchError(const QString& error);
     void gameDetailsResult(const QByteArray& result);
     void gameDetailsError(const QString& error);
+    void coverResult(const QByteArray& result);
     void platformResult(const QByteArray& result);
     void companyResult(const QByteArray& result);
     void genreResult(const QByteArray& result);

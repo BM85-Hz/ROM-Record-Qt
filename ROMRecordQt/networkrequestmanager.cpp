@@ -41,6 +41,17 @@ void NetworkRequestManager::sendGameDetailsRequest(const QString& requestString)
     connect(reply, &QNetworkReply::finished, this, &NetworkRequestManager::handleDetailsReply);
 }
 
+void NetworkRequestManager::handleCovers(qint64 cover_ID){
+    const QUrl url("https://lnattp9ct5.execute-api.us-west-2.amazonaws.com/production/v4/covers");
+    request.setUrl(url);
+
+    QString requestString;
+    requestString = QString("where id = %1; fields url;").arg(cover_ID);
+    QByteArray postData{requestString.toUtf8()};
+    QNetworkReply* reply = manager.post(request, postData);
+    connect(reply, &QNetworkReply::finished, this, &NetworkRequestManager::handleCoverReply);
+}
+
 void NetworkRequestManager::handlePlatforms(QJsonArray platform_IDs){
     const QUrl url("https://lnattp9ct5.execute-api.us-west-2.amazonaws.com/production/v4/platforms");
     request.setUrl(url);
@@ -137,6 +148,11 @@ void NetworkRequestManager::handleDetailsReply()
 
         reply->deleteLater();
     }
+}
+
+void NetworkRequestManager::handleCoverReply(){
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
+    emit coverResult(reply->readAll());
 }
 
 void NetworkRequestManager::handlePlatformReply()
