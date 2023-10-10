@@ -16,7 +16,7 @@ void NetworkRequestManager::sendSearchRequest(const QString& search)
 
     // Puts search query into full POST request body
     QString fullInput = QString("search \"%1\"; fields name; limit 500;").arg(search);
-    qDebug() << fullInput;
+    //qDebug() << fullInput;
 
     QByteArray postData{fullInput.toUtf8()};
 
@@ -27,7 +27,7 @@ void NetworkRequestManager::sendSearchRequest(const QString& search)
 
 void NetworkRequestManager::sendGameDetailsRequest(const QString& requestString)
 {
-    qDebug() << requestString;
+    //qDebug() << requestString;
 
     // Construct and send the game details request
     const QUrl url("https://lnattp9ct5.execute-api.us-west-2.amazonaws.com/production/v4/games");

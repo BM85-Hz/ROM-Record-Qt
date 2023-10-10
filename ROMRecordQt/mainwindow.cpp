@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent)
     textBrowserWidget = new QTextBrowser(this);
     imageLabel = new QLabel(this);
     imageLabel->setText("No cover loaded");
-    setCentralWidget(resultListWidget);
 
     // Connect signals and slots
     connect(&requestManager, &NetworkRequestManager::searchResult, this, &MainWindow::handleSearchResult);
@@ -58,10 +57,11 @@ MainWindow::~MainWindow()
 void MainWindow::handleSearchResult(const QByteArray& result)
 {
 
-    qDebug() << "Received JSON response:" << result;
+    //qDebug() << "Received JSON response:" << result;
 
     // Parse the JSON response
     QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
+
     if (!jsonResponse.isArray()) {
         resultListWidget->addItem("Invalid JSON response.");
         return;
@@ -90,12 +90,16 @@ void MainWindow::handleSearchResult(const QByteArray& result)
     // Clear the existing list items
     resultListWidget->clear();
 
+    if (namesList.isEmpty())
+        resultListWidget->addItem("No titles found.");
+
     // Add the names and ids to the list widget
     for (int i = 0; i < namesList.size(); ++i) {
         QListWidgetItem* item = new QListWidgetItem(namesList[i]);
         item->setData(Qt::UserRole, requestManager.gameIds[i]); // Set the game id as custom data
         resultListWidget->addItem(item);
     }
+    namesList.clear();
 }
 
 void MainWindow::handleSearchError(const QString& error)
@@ -124,7 +128,7 @@ void MainWindow::requestGameDetails(const QString& gameId)
 
 void MainWindow::handleDetailsResult(const QByteArray& result)
 {
-    qDebug() << "Received JSON response:" << result;
+    //qDebug() << "Received JSON response:" << result;
 
     // Parse the JSON response
     QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
@@ -203,7 +207,7 @@ void MainWindow::handleCoverResult(const QByteArray& result){
         QString url(obj["url"].toString());
         url = QString("https:%1").arg(url);
         url.replace("t_thumb", "t_cover_med");
-        qDebug() << url;
+        //qDebug() << url;
 
         QNetworkAccessManager* imageManager = new QNetworkAccessManager(this);
         connect(imageManager, &QNetworkAccessManager::finished, this, &MainWindow::handleImageDownloaded);
