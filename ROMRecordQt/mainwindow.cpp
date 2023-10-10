@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent)
     searchLineEdit = new QLineEdit(this);
     resultListWidget = new QListWidget(this);
     textBrowserWidget = new QTextBrowser(this);
+    QLabel* imageLabel = new QLabel(this);
+    imageLabel->setText("No image loaded");
     setCentralWidget(resultListWidget);
 
     // Connect signals and slots
@@ -38,7 +40,10 @@ MainWindow::MainWindow(QWidget *parent)
     QVBoxLayout* layout = new QVBoxLayout;
     layout->addWidget(searchLineEdit);
     layout->addWidget(resultListWidget);
-    layout->addWidget(textBrowserWidget);
+    QHBoxLayout* layoutWithin = new QHBoxLayout;
+    layoutWithin->addWidget(textBrowserWidget);
+    layoutWithin->addWidget(imageLabel);
+    layout->addLayout(layoutWithin);
     QWidget* centralWidget = new QWidget;
     centralWidget->setLayout(layout);
     setCentralWidget(centralWidget);

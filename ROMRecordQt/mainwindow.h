@@ -9,6 +9,8 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QPixmap>
+#include <QLabel>
 #include "networkrequestmanager.h"
 
 QT_BEGIN_NAMESPACE
