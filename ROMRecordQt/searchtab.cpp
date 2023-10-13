@@ -44,6 +44,13 @@ SearchTab::SearchTab(QWidget *parent)
     setLayout(mainLayout);
 }
 
+SearchTab::~SearchTab(){
+    delete searchLineEdit;
+    delete resultListWidget;
+    delete textBrowserWidget;
+    delete imageLabel;
+}
+
 void SearchTab::handleSearchResult(const QByteArray& result)
 {
 

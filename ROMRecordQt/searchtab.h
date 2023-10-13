@@ -20,7 +20,7 @@ class SearchTab : public QWidget
     Q_OBJECT
 public:
     SearchTab(QWidget *parent = nullptr);
-    ~SearchTab(){}
+    ~SearchTab();
 
 private slots:
     void handleSearchResult(const QByteArray& result);
