@@ -11,11 +11,13 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    networkrequestmanager.cpp
+    networkrequestmanager.cpp \
+    searchtab.cpp
 
 HEADERS += \
     mainwindow.h \
-    networkrequestmanager.h
+    networkrequestmanager.h \
+    searchtab.h
 
 FORMS += \
     mainwindow.ui
