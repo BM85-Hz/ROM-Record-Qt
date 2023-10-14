@@ -8,14 +8,14 @@ Stopwatch::Stopwatch(QWidget *parent)
     buttonStack = new QStackedWidget;
 
     startButton = new QPushButton("Start");
-    stopButton = new QPushButton("Stop");
+    pauseButton = new QPushButton("Stop");
     discardButton = new QPushButton("Discard");
     resumeButton = new QPushButton("Resume");
     saveButton = new QPushButton("Save");
 
     // Add buttons to the stacked widget
     buttonStack->addWidget(startButton);
-    buttonStack->addWidget(stopButton);
+    buttonStack->addWidget(pauseButton);
     QHBoxLayout* optionButtonsLayout = new QHBoxLayout;
     QWidget* optionButtons = new QWidget;
     optionButtonsLayout->addWidget(discardButton);
@@ -26,7 +26,7 @@ Stopwatch::Stopwatch(QWidget *parent)
 
     // Connect the button clicks to slots
     connect(startButton, &QPushButton::clicked, this, &Stopwatch::start);
-    connect(stopButton, &QPushButton::clicked, this, &Stopwatch::stop);
+    connect(pauseButton, &QPushButton::clicked, this, &Stopwatch::pause);
     connect(discardButton, &QPushButton::clicked, this, &Stopwatch::discard);
     connect(resumeButton, &QPushButton::clicked, this, &Stopwatch::resume);
 
@@ -36,49 +36,57 @@ Stopwatch::Stopwatch(QWidget *parent)
     layout->addWidget(buttonStack);
     setLayout(layout);
 
-    // Create a timer to update the stopwatch display
-    QTimer *timer = new QTimer(this);
+    timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Stopwatch::updateTime);
-    timer->start(1000); // Update the time every second
+    startTimer(0);
 }
 
 void Stopwatch::start(){
     if (!isRunning) {
+        startTime = QTime::currentTime();
         isRunning = true;
-        startTime = QDateTime::currentDateTime().addMSecs(-elapsedTime);
-        buttonStack->setCurrentIndex(1); // Show the Stop button
-        updateTime(); // Update the timer label
     }
+    elapsedTime = 0;
+    buttonStack->setCurrentIndex(1); // Show the Stop button
+    timer->start(1);
 }
 
-void Stopwatch::stop(){
+void Stopwatch::pause(){
     if (isRunning) {
         isRunning = false;
-        elapsedTime = startTime.msecsTo(QDateTime::currentDateTime());
         buttonStack->setCurrentIndex(2); // Show the Discard, Resume, Save buttons
+        timer->stop();
+        //qDebug() << elapsedTime;
     }
 }
 
 void Stopwatch::discard() {
     if (!isRunning) {
-        elapsedTime = 0;
-        updateTime();
+        timerLabel->setText("00:00:00");
         buttonStack->setCurrentIndex(0); // Show the Start button
     }
 }
 
 void Stopwatch::resume() {
     if (!isRunning) {
+        isRunning = true;
+        startTime = QTime::currentTime().addSecs(-elapsedTime / 1000);
         start();
     }
 }
 
 void Stopwatch::updateTime() {
     if (isRunning) {
-        int elapsedSeconds = elapsedTime / 1000;
-        int hours = elapsedSeconds / 3600;
-        int minutes = (elapsedSeconds % 3600) / 60;
-        int seconds = elapsedSeconds % 60;
-        timerLabel->setText(QString("%1:%2:%3").arg(hours, 2, 10, QChar('0')).arg(minutes, 2, 10, QChar('0')).arg(seconds, 2, 10, QChar('0')));
+        elapsedTime = startTime.msecsTo(QTime::currentTime());
+        int h = elapsedTime / 1000 / 60 / 60;
+        int m = (elapsedTime / 1000 / 60) - (h * 60);
+        int s = (elapsedTime / 1000) - (m * 60);
+        //int ms = elapsedTime - (s * 1000) - (m * 60000) - (h * 3600000);
+        QString diff = QString("%1:%2:%3").
+                       arg(h, 2, 10, zero).
+                       arg(m, 2, 10, zero).
+                       arg(s, 2, 10, zero);
+                       //arg(ms, 3, 10, zero);
+        timerLabel->setText(diff);
     }
 }
