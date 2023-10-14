@@ -20,7 +20,6 @@ public:
 
 public slots:
     void enable();
-    void disable();
     void start();
     void pause();
     void discard();
@@ -40,6 +39,9 @@ private:
     qint64 elapsedTime;
     bool isRunning;
     const QChar zero{'0'};
+
+    QString currentSession;
+    QLabel* currentSessionLabel;
 };
 
 #endif // STOPWATCH_H

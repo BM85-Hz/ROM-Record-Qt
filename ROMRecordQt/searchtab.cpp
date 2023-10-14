@@ -92,8 +92,6 @@ void SearchTab::handleSearchResult(const QByteArray& result)
 
     if (namesList.isEmpty()){
         resultListWidget->addItem("No titles found.");
-        stopwatch->gameName = "";
-        stopwatch->disable();
     }
 
     // Add the names and ids to the list widget
@@ -157,7 +155,6 @@ void SearchTab::handleDetailsResult(const QByteArray& result)
 
             QString name = obj["name"].toString();
             stopwatch->gameName = name;
-            qDebug() << stopwatch->gameName;
             stopwatch->enable();
 
             if (obj["cover"].toInt()){

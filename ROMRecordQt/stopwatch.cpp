@@ -5,6 +5,7 @@ Stopwatch::Stopwatch(QWidget *parent)
 {
     // Create and configure the UI components
     timerLabel = new QLabel("00:00:00");
+    currentSessionLabel = new QLabel("Currently Playing: Nothing Yet!");
     buttonStack = new QStackedWidget;
 
     startButton = new QPushButton("Start");
@@ -31,14 +32,14 @@ Stopwatch::Stopwatch(QWidget *parent)
     connect(resumeButton, &QPushButton::clicked, this, &Stopwatch::resume);
 
     // Create and configure layout
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(timerLabel);
-    layout->addWidget(buttonStack);
-    setLayout(layout);
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(timerLabel);
+    mainLayout->addWidget(currentSessionLabel);
+    mainLayout->addWidget(buttonStack);
+    setLayout(mainLayout);
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Stopwatch::updateTime);
-    startTimer(0);
 
     startButton->setEnabled(false);
 }
@@ -48,15 +49,13 @@ void Stopwatch::enable(){
         startButton->setEnabled(true);
 }
 
-void Stopwatch::disable(){
-    if(gameName.isEmpty())
-        startButton->setEnabled(false);
-}
-
 void Stopwatch::start(){
     if (!isRunning) {
         startTime = QTime::currentTime();
         isRunning = true;
+        currentSession = gameName;
+        QString text = QString("Currently Playing: %1").arg(currentSession);
+        currentSessionLabel->setText(text);
     }
     elapsedTime = 0;
     buttonStack->setCurrentIndex(1); // Show the Stop button
@@ -75,6 +74,7 @@ void Stopwatch::pause(){
 void Stopwatch::discard() {
     if (!isRunning) {
         timerLabel->setText("00:00:00");
+        currentSessionLabel->setText("Currently Playing: Nothing at the Moment");
         buttonStack->setCurrentIndex(0); // Show the Start button
     }
 }
@@ -100,5 +100,6 @@ void Stopwatch::updateTime() {
                        arg(s, 2, 10, zero);
                        //arg(ms, 3, 10, zero);
         timerLabel->setText(diff);
+        qDebug() << currentSession;
     }
 }
