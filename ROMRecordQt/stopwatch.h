@@ -16,8 +16,11 @@ class Stopwatch : public QWidget
 public:
     Stopwatch(QWidget *parent = nullptr);
     ~Stopwatch(){}
+    QString gameName;
 
 public slots:
+    void enable();
+    void disable();
     void start();
     void pause();
     void discard();

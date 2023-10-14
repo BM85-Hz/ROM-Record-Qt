@@ -90,8 +90,11 @@ void SearchTab::handleSearchResult(const QByteArray& result)
     // Clear the existing list items
     resultListWidget->clear();
 
-    if (namesList.isEmpty())
+    if (namesList.isEmpty()){
         resultListWidget->addItem("No titles found.");
+        stopwatch->gameName = "";
+        stopwatch->disable();
+    }
 
     // Add the names and ids to the list widget
     for (int i = 0; i < namesList.size(); ++i) {
@@ -153,6 +156,9 @@ void SearchTab::handleDetailsResult(const QByteArray& result)
             QJsonObject obj = value.toObject();
 
             QString name = obj["name"].toString();
+            stopwatch->gameName = name;
+            qDebug() << stopwatch->gameName;
+            stopwatch->enable();
 
             if (obj["cover"].toInt()){
                 qint64 cover_ID = obj["cover"].toInt();

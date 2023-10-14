@@ -1,7 +1,7 @@
 #include "stopwatch.h"
 
 Stopwatch::Stopwatch(QWidget *parent)
-    : QWidget(parent), elapsedTime(0), isRunning(false)
+    : QWidget(parent), gameName(""), elapsedTime(0), isRunning(false)
 {
     // Create and configure the UI components
     timerLabel = new QLabel("00:00:00");
@@ -39,6 +39,18 @@ Stopwatch::Stopwatch(QWidget *parent)
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Stopwatch::updateTime);
     startTimer(0);
+
+    startButton->setEnabled(false);
+}
+
+void Stopwatch::enable(){
+    if(!gameName.isNull())
+        startButton->setEnabled(true);
+}
+
+void Stopwatch::disable(){
+    if(gameName.isEmpty())
+        startButton->setEnabled(false);
 }
 
 void Stopwatch::start(){
