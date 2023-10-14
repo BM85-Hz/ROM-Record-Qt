@@ -14,6 +14,7 @@
 #include <QLabel>
 #include <QTabWidget>
 #include "networkrequestmanager.h"
+#include "stopwatch.h"
 
 class SearchTab : public QWidget
 {
@@ -38,6 +39,7 @@ private:
     QLineEdit* searchLineEdit;
     QListWidget* resultListWidget;
     QTextBrowser* textBrowserWidget;
+    Stopwatch* stopwatch;
     NetworkRequestManager requestManager;
 
     QLabel* imageLabel{};

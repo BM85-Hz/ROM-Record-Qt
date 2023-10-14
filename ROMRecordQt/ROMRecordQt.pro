@@ -13,13 +13,15 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     networkrequestmanager.cpp \
-    searchtab.cpp
+    searchtab.cpp \
+    stopwatch.cpp
 
 HEADERS += \
     calendartab.h \
     mainwindow.h \
     networkrequestmanager.h \
-    searchtab.h
+    searchtab.h \
+    stopwatch.h
 
 FORMS += \
     mainwindow.ui

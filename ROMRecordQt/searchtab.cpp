@@ -8,6 +8,7 @@ SearchTab::SearchTab(QWidget *parent)
     textBrowserWidget = new QTextBrowser(this);
     imageLabel = new QLabel(this);
     imageLabel->setText("No cover loaded");
+    stopwatch = new Stopwatch;
 
     // Connect signals and slots
     connect(&requestManager, &NetworkRequestManager::searchResult, this, &SearchTab::handleSearchResult);
@@ -41,6 +42,7 @@ SearchTab::SearchTab(QWidget *parent)
     layoutWithin->addWidget(textBrowserWidget);
     layoutWithin->addWidget(imageLabel);
     mainLayout->addLayout(layoutWithin);
+    mainLayout->addWidget(stopwatch);
     setLayout(mainLayout);
 }
 
@@ -49,6 +51,7 @@ SearchTab::~SearchTab(){
     delete resultListWidget;
     delete textBrowserWidget;
     delete imageLabel;
+    delete stopwatch;
 }
 
 void SearchTab::handleSearchResult(const QByteArray& result)
