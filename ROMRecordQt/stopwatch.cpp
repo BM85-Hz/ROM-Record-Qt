@@ -57,9 +57,8 @@ void Stopwatch::start(){
         QString text = QString("Currently Playing: %1").arg(currentSession);
         currentSessionLabel->setText(text);
     }
-    elapsedTime = 0;
     buttonStack->setCurrentIndex(1); // Show the Stop button
-    timer->start(1);
+    timer->start(1); // Iterates by millisecond
 }
 
 void Stopwatch::pause(){
@@ -82,7 +81,7 @@ void Stopwatch::discard() {
 void Stopwatch::resume() {
     if (!isRunning) {
         isRunning = true;
-        startTime = QTime::currentTime().addSecs(-elapsedTime / 1000);
+        startTime = QTime::currentTime().addSecs(-elapsedTime / 1000); // Makes sure time actually resumes from the pause point
         start();
     }
 }
@@ -100,6 +99,5 @@ void Stopwatch::updateTime() {
                        arg(s, 2, 10, zero);
                        //arg(ms, 3, 10, zero);
         timerLabel->setText(diff);
-        qDebug() << currentSession;
     }
 }

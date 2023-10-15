@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QListWidget>
 #include <QTextBrowser>
+#include <QScrollBar>
 #include <QVBoxLayout>
 #include <QJsonObject>
 #include <QJsonDocument>

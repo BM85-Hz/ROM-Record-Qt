@@ -189,6 +189,8 @@ void SearchTab::handleDetailsResult(const QByteArray& result)
                                                 "Companies:\n%4\nGenres:\n%5\nSummary:\n%6\n\n")
                                             .arg(name, platforms, first_release_date, companies, genres, summary);
                 textBrowserWidget->append(formattedInfo);
+                textBrowserWidget->verticalScrollBar()->setValue(0); // Set scroll bar to top
+
                 platforms.clear();
                 companies.clear();
                 genres.clear();
