@@ -8,6 +8,7 @@ CalendarTab::CalendarTab(QWidget *parent)
     sessionHistory->setPlaceholderText("No records for this date");
     notesEditor = new QTextEdit;
     notesEditor->setPlaceholderText("Notes section");
+    noteBook = new QMap<QDate, QString>;
 
     // Connect the calendar's selectionChanged signal to a slot to update notesEditor
     connect(calendar, &QCalendarWidget::selectionChanged, this, &CalendarTab::updateNotes);
@@ -34,10 +35,10 @@ void CalendarTab::updateNotes()
     QDate selectedDate = calendar->selectedDate();
 
     // Load notes for the selected date from storage (e.g., a file or database)
-    QString notes = loadNotes(selectedDate);
+    QString notesText = loadNotes(selectedDate);
 
     // Set the notes text in the QTextEdit
-    notesEditor->setPlainText(notes);
+    notesEditor->setPlainText(notesText);
 }
 
 QString CalendarTab::loadNotes(const QDate& date)
@@ -48,12 +49,24 @@ QString CalendarTab::loadNotes(const QDate& date)
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QTextStream in(&file);
+        QString datePattern = QString("^\\d{4}-\\d{2}-\\d{2}");
+        static QRegularExpression dateRegex(datePattern);
+
         while (!in.atEnd())
         {
             QString line = in.readLine();
             if (line.startsWith(date.toString("yyyy-MM-dd")))
             {
-                notes = line.mid(11); // Assuming the date format is yyyy-MM-dd
+                notes = line.mid(11);
+                while (!in.atEnd())
+                {
+                    QString nextLine = in.readLine();
+                    if (!nextLine.contains(dateRegex)) {
+                        notes += "\n" + nextLine;
+                    } else {
+                        break;
+                    }
+                }
                 break;
             }
         }
@@ -81,7 +94,7 @@ void CalendarTab::saveNotes(const QDate& date, const QString& notes)
     if (file.open(QIODevice::ReadWrite | QIODevice::Text))
     {
         QTextStream in(&file);
-        QString newContents;
+        QString updatedContents;
         bool updated = false;
 
         while (!in.atEnd())
@@ -89,22 +102,22 @@ void CalendarTab::saveNotes(const QDate& date, const QString& notes)
             QString line = in.readLine();
             if (line.startsWith(date.toString("yyyy-MM-dd")))
             {
-                newContents.append(date.toString("yyyy-MM-dd") + " " + notes + "\n");
+                updatedContents.append(date.toString("yyyy-MM-dd") + " " + notes + "\n");
                 updated = true;
             }
             else
             {
-                newContents.append(line + "\n");
+                updatedContents.append(line + "\n");
             }
         }
 
         if (!updated)
         {
-            newContents.append(date.toString("yyyy-MM-dd") + " " + notes + "\n");
+            updatedContents.append(date.toString("yyyy-MM-dd") + " " + notes + "\n");
         }
 
         file.seek(0); // Move cursor to top of file
-        file.write(newContents.toUtf8()); // Write in new contents
+        file.write(updatedContents.toUtf8()); // Write in updated contents
         file.resize(file.pos()); // Resize file to the cursor position
         file.close();
     }

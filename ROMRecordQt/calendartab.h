@@ -10,6 +10,9 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDate>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
+#include <QMap>
 
 class CalendarTab : public QWidget
 {
@@ -27,6 +30,7 @@ private slots:
 private:
     QCalendarWidget* calendar;
     QTextEdit* notesEditor;
+    QMap<QDate, QString>* noteBook;
 };
 
 #endif // CALENDARTAB_H
