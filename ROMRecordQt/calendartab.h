@@ -5,16 +5,28 @@
 #include <QWidget>
 #include <QCalendarWidget>
 #include <QVBoxLayout>
+#include <QTextBrowser>
+#include <QTextEdit>
+#include <QFile>
+#include <QTextStream>
+#include <QDate>
 
 class CalendarTab : public QWidget
 {
     Q_OBJECT
 public:
     CalendarTab(QWidget *parent = nullptr);
-    ~CalendarTab(){}
+    ~CalendarTab(){}\
+
+private slots:
+    void updateNotes();
+    QString loadNotes(const QDate& date);
+    void passNotes();
+    void saveNotes(const QDate& date, const QString& notes);
 
 private:
     QCalendarWidget* calendar;
+    QTextEdit* notesEditor;
 };
 
 #endif // CALENDARTAB_H
