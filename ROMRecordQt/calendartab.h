@@ -8,6 +8,7 @@
 #include <QTextBrowser>
 #include <QTextEdit>
 #include <QFile>
+#include <QFileSystemWatcher>
 #include <QTextStream>
 #include <QDate>
 #include <QRegularExpression>
@@ -23,7 +24,8 @@ public:
     ~CalendarTab(){}\
 
 private slots:
-    void updateFields();
+    void updateSessions();
+    void updateNotes();
     QString loadNotes(const QDate& date);
     void passNotes();
     void saveNotes(const QDate& date, const QString& notes);

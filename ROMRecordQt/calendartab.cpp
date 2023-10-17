@@ -9,11 +9,19 @@ CalendarTab::CalendarTab(QWidget *parent)
     notesEditor = new QTextEdit;
     notesEditor->setPlaceholderText("Notes section");
 
-    // Connect the calendar's selectionChanged signal to a slot to update notesEditor
-    connect(calendar, &QCalendarWidget::selectionChanged, this, &CalendarTab::updateFields);
+    // Connect the calendar's selectionChanged signal to a slot to update sessionHistory and notesEditor
+    connect(calendar, &QCalendarWidget::selectionChanged, this, &CalendarTab::updateSessions);
+    connect(calendar, &QCalendarWidget::selectionChanged, this, &CalendarTab::updateNotes);
 
     // Connect the notesEditor's textChanged signal to a slot to save notes
     connect(notesEditor, &QTextEdit::textChanged, this, &CalendarTab::passNotes);
+
+    // Watch "calendarlog.json" for changes
+    QFileSystemWatcher* fileWatcher = new QFileSystemWatcher;
+    fileWatcher->addPath("calendarlog.json");
+
+    // Connect the fileChanged signal to a slot to handle file updates
+    connect(fileWatcher, &QFileSystemWatcher::fileChanged, this, &CalendarTab::updateSessions);
 
     // Create CalendarTab layout
     QHBoxLayout* mainLayout = new QHBoxLayout;
@@ -25,21 +33,32 @@ CalendarTab::CalendarTab(QWidget *parent)
     setLayout(mainLayout);
 
     // Load and display notes for the current date
-    updateFields();
+    updateSessions();
+    updateNotes();
 }
 
-void CalendarTab::updateFields()
+void CalendarTab::updateSessions()
 {
     // Get the selected date from the calendar
     QDate selectedDate = calendar->selectedDate();
 
-    // Load notes and play sessions for the selected date from storage (e.g., a file or database)
-    QString notesText = loadNotes(selectedDate);
+    // Load play sessions for the selected date from storage
     QString sessionText = loadSessions(selectedDate);
 
-    // Set the notes and play session text in the QTextEdit and QTextBrowser
-    notesEditor->setPlainText(notesText);
+    // Set the play session text in the QTextBrowser
     sessionHistory->setPlainText(sessionText);
+}
+
+void CalendarTab::updateNotes()
+{
+    // Similar to previous function; originally had one function for
+    // both notes and play sessions, but reloading notes every time
+    // the play session games updated is potentially inefficient
+    QDate selectedDate = calendar->selectedDate();
+
+    QString notesText = loadNotes(selectedDate);
+
+    notesEditor->setPlainText(notesText);
 }
 
 QString CalendarTab::loadNotes(const QDate& date)
@@ -118,9 +137,9 @@ void CalendarTab::saveNotes(const QDate& date, const QString& notes)
 
 QString CalendarTab::loadSessions(const QDate& date)
 {
-    QString notes;
-    // Read notes from a file or database based on the date
+    QString records;
     QFile file("calendarlog.json");
+
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         // Parses json as a UTF-8 encoded JSON
@@ -133,10 +152,20 @@ QString CalendarTab::loadSessions(const QDate& date)
         // Reads and returns notes if they exist for the given date
         if (jsonObject.contains(dateString))
         {
-            notes = jsonObject[dateString].toString();
-            qDebug() << notes;
+            // Get the nested JSON object for the selected date
+            QJsonObject dateData = jsonObject[dateString].toObject();
+
+            // Iterate through the games and timestamps using pointer arithmetic
+            for (auto it = dateData.begin(); it != dateData.end(); ++it)
+            {
+                QString gameName = it.key();
+                QString timestamp = it.value().toString();
+
+                // Concatenate the results into the QString
+                records += "-" + gameName + ": " + timestamp + "\n";
+            }
         }
         file.close();
     }
-    return notes;
+    return records;
 }
