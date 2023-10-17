@@ -14,7 +14,6 @@
 #include <QRegularExpressionMatch>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include "logmaker.h"
 
 class CalendarTab : public QWidget
 {
@@ -24,14 +23,16 @@ public:
     ~CalendarTab(){}\
 
 private slots:
-    void updateNotes();
+    void updateFields();
     QString loadNotes(const QDate& date);
     void passNotes();
+    void saveNotes(const QDate& date, const QString& notes);
+    QString loadSessions(const QDate& date);
 
 private:
     QCalendarWidget* calendar;
     QTextEdit* notesEditor;
-    LogMaker* noteSaver;
+    QTextBrowser* sessionHistory;
 };
 
 #endif // CALENDARTAB_H
