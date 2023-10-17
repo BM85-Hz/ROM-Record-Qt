@@ -53,7 +53,7 @@ void Stopwatch::enable(){
 
 void Stopwatch::start(){
     if (!isRunning) {
-        startTime = QTime::currentTime();
+        startTime = QDateTime::currentDateTime();
         isRunning = true;
         currentSession = gameName;
         QString text = QString("Currently Playing: %1").arg(currentSession);
@@ -83,7 +83,7 @@ void Stopwatch::discard() {
 void Stopwatch::resume() {
     if (!isRunning) {
         isRunning = true;
-        startTime = QTime::currentTime().addSecs(-elapsedTime / 1000); // Makes sure time actually resumes from the pause point
+        startTime = QDateTime::currentDateTime().addSecs(-elapsedTime / 1000); // Makes sure time actually resumes from the pause point
         start();
     }
 }
@@ -99,10 +99,10 @@ void Stopwatch::save(){
 
 void Stopwatch::updateTime() {
     if (isRunning) {
-        elapsedTime = startTime.msecsTo(QTime::currentTime());
+        elapsedTime = startTime.msecsTo(QDateTime::currentDateTime());
         int h = elapsedTime / 1000 / 60 / 60;
-        int m = (elapsedTime / 1000 / 60) - (h * 60);
-        int s = (elapsedTime / 1000) - (m * 60);
+        int m = (elapsedTime / 1000 / 60) % 60;
+        int s = (elapsedTime / 1000) % 60;
         //int ms = elapsedTime - (s * 1000) - (m * 60000) - (h * 3600000);
         QString diff = QString("%1:%2:%3").
                        arg(h, 2, 10, zero).

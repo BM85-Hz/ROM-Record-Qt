@@ -8,8 +8,8 @@ LogMaker::LogMaker()
 QString LogMaker::timestampMaker(qint64& time)
 {
     int h = time / 1000 / 60 / 60;
-    int m = (time / 1000 / 60) - (h * 60);
-    int s = (time / 1000) - (m * 60);
+    int m = (time / 1000 / 60) % 60;
+    int s = (time / 1000) % 60;
     QString timeStamp = QString("%1:%2:%3").arg(h, 2, 10, QLatin1Char('0')).
                    arg(m, 2, 10, QLatin1Char('0')).arg(s, 2, 10, QLatin1Char('0'));
 

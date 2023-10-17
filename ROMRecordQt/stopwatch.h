@@ -5,7 +5,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QPushButton>
-#include <QTime>
+#include <QDateTime>
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QStackedWidget>
@@ -37,7 +37,7 @@ private:
     QPushButton* discardButton;
     QPushButton* resumeButton;
     QPushButton* saveButton;
-    QTime startTime;
+    QDateTime startTime;
     qint64 elapsedTime;
     bool isRunning;
     const QChar zero{'0'};
