@@ -8,6 +8,7 @@ CalendarTab::CalendarTab(QWidget *parent)
     sessionHistory->setPlaceholderText("No records for this date");
     notesEditor = new QTextEdit;
     notesEditor->setPlaceholderText("Notes section");
+    noteSaver = new LogMaker;
 
     // Connect the calendar's selectionChanged signal to a slot to update notesEditor
     connect(calendar, &QCalendarWidget::selectionChanged, this, &CalendarTab::updateNotes);
@@ -68,48 +69,13 @@ void CalendarTab::passNotes() // Helper function for saving notes
 {
     // Get the selected date from the calendar
     QDate selectedDate = calendar->selectedDate();
+    QString dateString = selectedDate.toString("yyyy-MM-dd");
 
     // Get the notes from the QTextEdit
     QString notes = notesEditor->toPlainText();
 
-    // Save the notes to storage
-    saveNotes(selectedDate, notes);
-}
-
-void CalendarTab::saveNotes(const QDate& date, const QString& notes)
-{
     QFile file("notes.json");
-    QString dateString = date.toString("yyyy-MM-dd");
 
-    if (file.open(QIODevice::ReadWrite | QIODevice::Text))
-    {
-        QJsonDocument jsonDocument;
-   \
-        // Read existing JSON data from the file
-        QByteArray data = file.readAll();
-        if (!data.isEmpty())
-        {
-            // Parse existing JSON for QJsonDocument
-            jsonDocument = QJsonDocument::fromJson(data);
-        }
-        else
-        {
-            // If the file is empty, create a new JSON object
-            jsonDocument.setObject(QJsonObject());
-        }
-
-        // Convert JSONDoc "back up" into JSONObject data struct
-        QJsonObject jsonObject = jsonDocument.object();
-
-        // Update or add a new entry in the JSON object
-        jsonObject[dateString] = notes;
-
-        jsonDocument.setObject(jsonObject);
-
-        // Write the updated JSON data back to the file
-        file.seek(0); // Move cursor to top of file
-        file.write(jsonDocument.toJson()); // Write in updated contents
-        file.resize(file.pos()); // Resize file to the cursor position
-        file.close();
-    }
+    // Save the notes to storage
+    noteSaver->fileSaver(dateString, notes, file);
 }

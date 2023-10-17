@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QStackedWidget>
+#include "logmaker.h"
 
 class Stopwatch : public QWidget
 {
@@ -24,6 +25,7 @@ public slots:
     void pause();
     void discard();
     void resume();
+    void save();
     void updateTime();
 
 private:
@@ -42,6 +44,8 @@ private:
 
     QString currentSession;
     QLabel* currentSessionLabel;
+
+    LogMaker* logmaker;
 };
 
 #endif // STOPWATCH_H

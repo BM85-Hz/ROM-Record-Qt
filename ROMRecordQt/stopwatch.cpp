@@ -7,6 +7,7 @@ Stopwatch::Stopwatch(QWidget *parent)
     timerLabel = new QLabel("00:00:00");
     currentSessionLabel = new QLabel("Currently Playing: Nothing Yet!");
     buttonStack = new QStackedWidget;
+    logmaker = new LogMaker;
 
     startButton = new QPushButton("Start");
     pauseButton = new QPushButton("Stop");
@@ -30,6 +31,7 @@ Stopwatch::Stopwatch(QWidget *parent)
     connect(pauseButton, &QPushButton::clicked, this, &Stopwatch::pause);
     connect(discardButton, &QPushButton::clicked, this, &Stopwatch::discard);
     connect(resumeButton, &QPushButton::clicked, this, &Stopwatch::resume);
+    connect(saveButton, &QPushButton::clicked, this, &Stopwatch::save);
 
     // Create and configure layout
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -84,6 +86,10 @@ void Stopwatch::resume() {
         startTime = QTime::currentTime().addSecs(-elapsedTime / 1000); // Makes sure time actually resumes from the pause point
         start();
     }
+}
+
+void Stopwatch::save(){
+    logmaker->saveToLogs(currentSession, elapsedTime);
 }
 
 void Stopwatch::updateTime() {
