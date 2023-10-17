@@ -8,7 +8,6 @@ CalendarTab::CalendarTab(QWidget *parent)
     sessionHistory->setPlaceholderText("No records for this date");
     notesEditor = new QTextEdit;
     notesEditor->setPlaceholderText("Notes section");
-    noteBook = new QMap<QDate, QString>;
 
     // Connect the calendar's selectionChanged signal to a slot to update notesEditor
     connect(calendar, &QCalendarWidget::selectionChanged, this, &CalendarTab::updateNotes);
@@ -45,30 +44,20 @@ QString CalendarTab::loadNotes(const QDate& date)
 {
     QString notes;
     // Read notes from a file or database based on the date
-    QFile file("notes.txt");
+    QFile file("notes.json");
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        QTextStream in(&file);
-        QString datePattern = QString("^\\d{4}-\\d{2}-\\d{2}");
-        static QRegularExpression dateRegex(datePattern);
+        // Parses json as a UTF-8 encoded JSON
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(file.readAll());
+        // Makes JSON data struct
+        QJsonObject jsonObject = jsonDocument.object();
+        // Key values are dates
+        QString dateString = date.toString("yyyy-MM-dd");
 
-        while (!in.atEnd())
+        // Reads and returns notes if they exist for the given date
+        if (jsonObject.contains(dateString))
         {
-            QString line = in.readLine();
-            if (line.startsWith(date.toString("yyyy-MM-dd")))
-            {
-                notes = line.mid(11);
-                while (!in.atEnd())
-                {
-                    QString nextLine = in.readLine();
-                    if (!nextLine.contains(dateRegex)) {
-                        notes += "\n" + nextLine;
-                    } else {
-                        break;
-                    }
-                }
-                break;
-            }
+            notes = jsonObject[dateString].toString();
         }
         file.close();
     }
@@ -89,35 +78,37 @@ void CalendarTab::passNotes() // Helper function for saving notes
 
 void CalendarTab::saveNotes(const QDate& date, const QString& notes)
 {
-    QFile file("notes.txt");
+    QFile file("notes.json");
+    QString dateString = date.toString("yyyy-MM-dd");
 
     if (file.open(QIODevice::ReadWrite | QIODevice::Text))
     {
-        QTextStream in(&file);
-        QString updatedContents;
-        bool updated = false;
-
-        while (!in.atEnd())
+        QJsonDocument jsonDocument;
+   \
+        // Read existing JSON data from the file
+        QByteArray data = file.readAll();
+        if (!data.isEmpty())
         {
-            QString line = in.readLine();
-            if (line.startsWith(date.toString("yyyy-MM-dd")))
-            {
-                updatedContents.append(date.toString("yyyy-MM-dd") + " " + notes + "\n");
-                updated = true;
-            }
-            else
-            {
-                updatedContents.append(line + "\n");
-            }
+            // Parse existing JSON for QJsonDocument
+            jsonDocument = QJsonDocument::fromJson(data);
+        }
+        else
+        {
+            // If the file is empty, create a new JSON object
+            jsonDocument.setObject(QJsonObject());
         }
 
-        if (!updated)
-        {
-            updatedContents.append(date.toString("yyyy-MM-dd") + " " + notes + "\n");
-        }
+        // Convert JSONDoc "back up" into JSONObject data struct
+        QJsonObject jsonObject = jsonDocument.object();
 
+        // Update or add a new entry in the JSON object
+        jsonObject[dateString] = notes;
+
+        jsonDocument.setObject(jsonObject);
+
+        // Write the updated JSON data back to the file
         file.seek(0); // Move cursor to top of file
-        file.write(updatedContents.toUtf8()); // Write in updated contents
+        file.write(jsonDocument.toJson()); // Write in updated contents
         file.resize(file.pos()); // Resize file to the cursor position
         file.close();
     }

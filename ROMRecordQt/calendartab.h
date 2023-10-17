@@ -12,7 +12,8 @@
 #include <QDate>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
-#include <QMap>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 class CalendarTab : public QWidget
 {
@@ -30,7 +31,6 @@ private slots:
 private:
     QCalendarWidget* calendar;
     QTextEdit* notesEditor;
-    QMap<QDate, QString>* noteBook;
 };
 
 #endif // CALENDARTAB_H
