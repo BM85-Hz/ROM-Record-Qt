@@ -89,7 +89,12 @@ void Stopwatch::resume() {
 }
 
 void Stopwatch::save(){
-    logmaker->saveToLogs(currentSession, elapsedTime);
+    if(!isRunning){
+        logmaker->saveToLogs(currentSession, elapsedTime);
+        timerLabel->setText("00:00:00");
+        currentSessionLabel->setText("Previous session added to logs.");
+        buttonStack->setCurrentIndex(0); // Show the Start button
+    }
 }
 
 void Stopwatch::updateTime() {
