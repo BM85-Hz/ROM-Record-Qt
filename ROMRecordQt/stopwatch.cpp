@@ -53,6 +53,7 @@ void Stopwatch::enable(){
 
 void Stopwatch::start(){
     if (!isRunning) {
+        startDate = QDate::currentDate();
         startTime = QDateTime::currentDateTime();
         isRunning = true;
         currentSession = gameName;
@@ -90,7 +91,7 @@ void Stopwatch::resume() {
 
 void Stopwatch::save(){
     if(!isRunning){
-        logmaker->saveToLogs(currentSession, elapsedTime);
+        logmaker->saveToLogs(currentSession, elapsedTime, startDate);
         timerLabel->setText("00:00:00");
         currentSessionLabel->setText("Previous session added to logs.");
         buttonStack->setCurrentIndex(0); // Show the Start button

@@ -37,6 +37,7 @@ private:
     QPushButton* discardButton;
     QPushButton* resumeButton;
     QPushButton* saveButton;
+    QDate startDate;
     QDateTime startTime;
     qint64 elapsedTime;
     bool isRunning;

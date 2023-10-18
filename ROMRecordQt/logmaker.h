@@ -14,10 +14,7 @@ class LogMaker : public QObject
 public:
     LogMaker();
     QString timestampMaker(qint64& time);
-    void saveToLogs(QString& game, qint64& clockTotal);
-
-private:
-    void logSaver(const QString&, const QString&, QFile&);
+    void saveToLogs(QString& game, qint64& clockTotal, QDate& startDate);
 };
 
 #endif // LOGMAKER_H
