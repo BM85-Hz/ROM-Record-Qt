@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     calendartab.cpp \
+    liststab.cpp \
     logmaker.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
 
 HEADERS += \
     calendartab.h \
+    liststab.h \
     logmaker.h \
     mainwindow.h \
     networkrequestmanager.h \

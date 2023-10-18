@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "searchtab.h"
 #include "calendartab.h"
+#include "liststab.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -11,7 +12,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     tabWidget = new QTabWidget;
     tabWidget->addTab(new SearchTab, tr("Search"));
-    tabWidget->addTab(new CalendarTab, "Calendar");
+    tabWidget->addTab(new CalendarTab, tr("Calendar"));
+    tabWidget->addTab(new ListsTab, tr("Lists"));
+    //tabWidget->addTab(new AboutTab, tr("About"));
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(tabWidget);

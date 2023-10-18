@@ -11,8 +11,6 @@
 #include <QFileSystemWatcher>
 #include <QTextStream>
 #include <QDate>
-#include <QRegularExpression>
-#include <QRegularExpressionMatch>
 #include <QJsonDocument>
 #include <QJsonObject>
 
@@ -20,8 +18,8 @@ class CalendarTab : public QWidget
 {
     Q_OBJECT
 public:
-    CalendarTab(QWidget *parent = nullptr);
-    ~CalendarTab(){}\
+    explicit CalendarTab(QWidget *parent = nullptr);
+    ~CalendarTab(){}
 
 private slots:
     void updateSessions();

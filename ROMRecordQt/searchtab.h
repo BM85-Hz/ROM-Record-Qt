@@ -21,7 +21,7 @@ class SearchTab : public QWidget
 {
     Q_OBJECT
 public:
-    SearchTab(QWidget *parent = nullptr);
+    explicit SearchTab(QWidget *parent = nullptr);
     ~SearchTab();
 
 private slots:
