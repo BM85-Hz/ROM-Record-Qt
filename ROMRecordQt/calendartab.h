@@ -13,13 +13,14 @@
 #include <QDate>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QLabel>
 
 class CalendarTab : public QWidget
 {
     Q_OBJECT
 public:
     explicit CalendarTab(QWidget *parent = nullptr);
-    ~CalendarTab(){}
+    ~CalendarTab();
 
 private slots:
     void updateSessions();
@@ -33,6 +34,9 @@ private:
     QCalendarWidget* calendar;
     QTextEdit* notesEditor;
     QTextBrowser* sessionHistory;
+
+    QLabel* sessionLabel;
+    QLabel* noteLabel;
 };
 
 #endif // CALENDARTAB_H

@@ -16,7 +16,7 @@ class Stopwatch : public QWidget
     Q_OBJECT
 public:
     explicit Stopwatch(QWidget *parent = nullptr);
-    ~Stopwatch(){}
+    ~Stopwatch();
     QString gameName;
 
 public slots:

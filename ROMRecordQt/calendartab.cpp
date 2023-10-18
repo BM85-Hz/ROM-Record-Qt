@@ -4,10 +4,12 @@ CalendarTab::CalendarTab(QWidget *parent)
     : QWidget(parent)
 {
     calendar = new QCalendarWidget;
+    sessionLabel = new QLabel("Games Played");
     sessionHistory = new QTextBrowser;
     sessionHistory->setPlaceholderText("No records for this date");
+    noteLabel = new QLabel("Notes");
     notesEditor = new QTextEdit;
-    notesEditor->setPlaceholderText("Notes section");
+    notesEditor->setPlaceholderText("Write something!");
 
     // Connect the calendar's selectionChanged signal to a slot to update sessionHistory and notesEditor
     connect(calendar, &QCalendarWidget::selectionChanged, this, &CalendarTab::updateSessions);
@@ -18,7 +20,7 @@ CalendarTab::CalendarTab(QWidget *parent)
 
     // Watch "calendarlog.json" for changes
     QFileSystemWatcher* fileWatcher = new QFileSystemWatcher;
-    fileWatcher->addPath("calendarlog.json");
+    fileWatcher->addPath("./logs/calendarlog.json");
 
     // Connect the fileChanged signal to a slot to handle file updates
     connect(fileWatcher, &QFileSystemWatcher::fileChanged, this, &CalendarTab::updateSessions);
@@ -27,7 +29,9 @@ CalendarTab::CalendarTab(QWidget *parent)
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(calendar);
     QVBoxLayout* layoutWithin = new QVBoxLayout;
+    layoutWithin->addWidget(sessionLabel);
     layoutWithin->addWidget(sessionHistory);
+    layoutWithin->addWidget(noteLabel);
     layoutWithin->addWidget(notesEditor);
     mainLayout->addLayout(layoutWithin);
     setLayout(mainLayout);
@@ -35,6 +39,14 @@ CalendarTab::CalendarTab(QWidget *parent)
     // Load and display notes for the current date
     updateSessions();
     updateNotes();
+}
+
+CalendarTab::~CalendarTab(){
+    delete calendar;
+    delete sessionHistory;
+    delete notesEditor;
+    delete sessionLabel;
+    delete noteLabel;
 }
 
 void CalendarTab::updateSessions()
@@ -65,7 +77,7 @@ QString CalendarTab::loadNotes(const QDate& date)
 {
     QString notes;
     // Read notes from a file or database based on the date
-    QFile file("notes.json");
+    QFile file("./logs/notes.json");
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         // Parses json as a UTF-8 encoded JSON
@@ -99,7 +111,7 @@ void CalendarTab::passNotes() // Helper function for saving notes
 
 void CalendarTab::saveNotes(const QDate& date, const QString& notes)
 {
-    QFile file("notes.json");
+    QFile file("./logs/notes.json");
     QString dateString = date.toString("yyyy-MM-dd");
 
     if (file.open(QIODevice::ReadWrite | QIODevice::Text))
@@ -138,7 +150,7 @@ void CalendarTab::saveNotes(const QDate& date, const QString& notes)
 QString CalendarTab::loadSessions(const QDate& date)
 {
     QString records;
-    QFile file("calendarlog.json");
+    QFile file("./logs/calendarlog.json");
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {

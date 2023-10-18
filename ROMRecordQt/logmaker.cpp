@@ -18,7 +18,7 @@ QString LogMaker::timestampMaker(qint64& time)
 
 void LogMaker::saveToLogs(QString& game, qint64& clockTotal, QDate& startDate)
 {
-    QFile file("calendarlog.json");
+    QFile file("./logs/calendarlog.json");
 
     if (file.open(QIODevice::ReadWrite  | QIODevice::Text))
     {
@@ -68,7 +68,7 @@ void LogMaker::saveToLogs(QString& game, qint64& clockTotal, QDate& startDate)
     }
 
     /*
-    file.setFileName("calendarlog.json");
+    file.setFileName("./logs/calendarlog.json");
     if (file.open(QIODevice::ReadWrite | QIODevice::Text))
     {
         // Parses json as a UTF-8 encoded JSON

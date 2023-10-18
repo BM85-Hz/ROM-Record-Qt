@@ -46,6 +46,19 @@ Stopwatch::Stopwatch(QWidget *parent)
     startButton->setEnabled(false);
 }
 
+Stopwatch::~Stopwatch(){
+    delete timerLabel;
+    delete currentSessionLabel;
+    delete startButton;
+    delete pauseButton;
+    delete discardButton;
+    delete resumeButton;
+    delete saveButton;
+    delete buttonStack;
+    delete logmaker;
+    delete timer;
+}
+
 void Stopwatch::enable(){
     if(!gameName.isNull())
         startButton->setEnabled(true);

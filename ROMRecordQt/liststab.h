@@ -3,16 +3,22 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QFileSystemWatcher>
 #include <QTextBrowser>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QString>
 
 class ListsTab : public QWidget
 {
     Q_OBJECT
 public:
     explicit ListsTab(QWidget* parent = nullptr);
-    ~ListsTab(){}
+    ~ListsTab();
+
+private slots:
+    QString loadRecents();
+    QString loadTotals();
 
 private:
     QTextBrowser* recentlyPlayed;
