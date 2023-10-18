@@ -18,23 +18,31 @@ QString LogMaker::timestampMaker(qint64& time)
 
 QString LogMaker::addPrevious(QString& prevTimeString, qint64& clockTotal)
 {
-    QTime prevTime = QTime::fromString(prevTimeString, "hh:mm:ss");
-    qDebug() << prevTime;
+    static QRegularExpression regex("(\\d+):(\\d+):(\\d+)");
+    QRegularExpressionMatch match = regex.match(prevTimeString);
 
-    // QTime is invalid above 23 hours(?), potentially more, need guaranteed conversion.
-    qint64 prevSeconds = prevTime.hour() * 3600 + prevTime.minute() * 60 + prevTime.second();
+    if (match.hasMatch()) {
+        // Extract the matched values as strings
+        QString hours = match.captured(1);
+        QString minutes = match.captured(2);
+        QString seconds = match.captured(3);
 
-    if (prevSeconds >= 86400){
-        qint64 additionalDays = prevSeconds / 86400;
-        prevSeconds %= 86400;
-        prevSeconds += additionalDays * 86400;
+        // Convert the extracted strings to integers
+        qint64 hoursInt = hours.toInt();
+        qint64 minutesInt = minutes.toInt();
+        qint64 secondsInt = seconds.toInt();
+
+        qint64 prevSeconds = hoursInt * 3600 + minutesInt * 60 + secondsInt;
+
+        qint64 newTotal = clockTotal + (prevSeconds * 1000);
+
+        // Convert time into string
+        QString diff = timestampMaker(newTotal);
+        return diff;
+    } else {
+        // This does nothing, just mitigates code smell for unopposed return value
+        return prevTimeString;
     }
-
-    qint64 newTotal = clockTotal + (prevSeconds * 1000);
-
-    // Convert time into string
-    QString diff = timestampMaker(newTotal);
-    return diff;
 }
 
 void LogMaker::saveToLogs(QString& game, qint64& clockTotal, QDate& startDate)
