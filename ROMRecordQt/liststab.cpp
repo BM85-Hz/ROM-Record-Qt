@@ -20,7 +20,7 @@ ListsTab::ListsTab(QWidget *parent)
     recentLabel = new QLabel("Recently Played");
     mainLayout->addWidget(recentLabel);
     mainLayout->addWidget(recentlyPlayed);
-    totalLabel = new QLabel("Total Times");
+    totalLabel = new QLabel("Total Times (in Descending Order)");
     mainLayout->addWidget(totalLabel);
     mainLayout->addWidget(totalAmounts);
     setLayout(mainLayout);
@@ -51,19 +51,62 @@ QString ListsTab::loadTotals(){
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         // Parses json as a UTF-8 encoded JSON
-        QJsonDocument jsonDocument = QJsonDocument::fromJson(file.readAll());
+        QJsonDocument jsonDocument{QJsonDocument::fromJson(file.readAll())};
         // Makes JSON data struct
-        QJsonObject jsonObject = jsonDocument.object();
+        QJsonObject jsonObject{jsonDocument.object()};
 
-        for (auto it = jsonObject.begin(); it != jsonObject.end(); ++it)
-        {
-            QString gameName = it.key();
-            QString timestamp = it.value().toString();
+        QVector<QPair<QString, QString>> timestampVector;
 
-            // Concatenate the results into the QString
-            records += gameName + ": " + timestamp + "\n";
+        // Add JSON data to vector
+        for (auto it = jsonObject.begin(); it != jsonObject.end(); ++it) {
+            QString gameName{it.key()};
+            QString timestamp{it.value().toString()};
+            timestampVector.append(qMakePair(gameName, timestamp));
         }
         file.close();
+
+        // Custom sorting function that converts timestamps to seconds and compares
+        // Needed because otherwise the strings will not sort properly
+        // (i.e. they will attempt to adhere to hh:mm:ss format even though
+        // the hours place is not restricted to two digits)
+        auto descendingOrder{
+            [](const QPair<QString, QString>& a, const QPair<QString, QString>& b) {
+                // Take two timestamps using the lambda declaration above
+                QString timestampA{a.second};
+                QString timestampB{b.second};
+
+                // An integer we can compare reliably
+                int secondsA{};
+                int secondsB{};
+
+                // Parse and convert timestamps to seconds
+                static QRegularExpression regex("(\\d+):(\\d+):(\\d+)");
+                QRegularExpressionMatch matchA{regex.match(timestampA)};
+                QRegularExpressionMatch matchB{regex.match(timestampB)};
+
+                // Use the regex captures to convert to seconds
+                if (matchA.hasMatch()) {
+                    secondsA = matchA.captured(1).toInt() * 3600 +
+                               matchA.captured(2).toInt() * 60 + matchA.captured(3).toInt();
+                }
+
+                if (matchB.hasMatch()) {
+                    secondsB = matchB.captured(1).toInt() * 3600 +
+                               matchB.captured(2).toInt() * 60 + matchB.captured(3).toInt();
+                }
+
+                return secondsA > secondsB;
+            }
+        };
+
+        std::sort(timestampVector.begin(), timestampVector.end(), descendingOrder);
+
+        // Concatenate the results into the QString
+        for (const auto& pair : timestampVector) {
+            QString gameName{pair.first};
+            QString timestamp{pair.second};
+            records += gameName + ": " + timestamp + "\n";
+        }
     }
     return records;
 }

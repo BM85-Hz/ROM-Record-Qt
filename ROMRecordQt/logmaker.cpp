@@ -60,9 +60,9 @@ void LogMaker::saveToLogs(QString& game, qint64& clockTotal, QDate& startDate)
 
         if (!jsonObject.contains(dateString)) {
             // Create a new date key with the game and time played if not already present
-            QString diff = timestampMaker(clockTotal);
+            QString timestamp = timestampMaker(clockTotal);
             QJsonObject dateObject;
-            dateObject[game] = diff;
+            dateObject[game] = timestamp;
             jsonObject[dateString] = dateObject;
         } else {
             // If the current date key exists
@@ -70,17 +70,17 @@ void LogMaker::saveToLogs(QString& game, qint64& clockTotal, QDate& startDate)
 
             if (!dateObject.contains(game)) {
                 // Create a new game key with the time played if not present
-                QString diff = timestampMaker(clockTotal);
-                dateObject[game] = diff;
+                QString timestamp = timestampMaker(clockTotal);
+                dateObject[game] = timestamp;
                 jsonObject[dateString] = dateObject;
             } else {
                 // If the game key already exists
                 QString prevTimeString = dateObject[game].toString();
 
-                QString diff = addPrevious(prevTimeString, clockTotal);
+                QString timestamp = addPrevious(prevTimeString, clockTotal);
 
                 // Update the existing game key with the new time played
-                dateObject[game] = diff;
+                dateObject[game] = timestamp;
                 jsonObject[dateString] = dateObject;
             }
         }
@@ -101,16 +101,16 @@ void LogMaker::saveToLogs(QString& game, qint64& clockTotal, QDate& startDate)
 
         if (!jsonObject.contains(game)) {
             // Create a new date key with the game and time played if not already present
-            QString diff = timestampMaker(clockTotal);
-            jsonObject[game] = diff;
+            QString timestamp = timestampMaker(clockTotal);
+            jsonObject[game] = timestamp;
         } else {
             // If the game key already exists
             QString prevTimeString = jsonObject[game].toString();
 
-            QString diff = addPrevious(prevTimeString, clockTotal);
+            QString timestamp = addPrevious(prevTimeString, clockTotal);
 
             // Update the existing game key with the new time played
-            jsonObject[game] = diff;
+            jsonObject[game] = timestamp;
         }
 
         file.resize(0); // Clear the file content
