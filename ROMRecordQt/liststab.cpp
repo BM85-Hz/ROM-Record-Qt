@@ -17,7 +17,7 @@ ListsTab::ListsTab(QWidget *parent)
     connect(fileWatcher, &QFileSystemWatcher::fileChanged, this, &ListsTab::updateBrowsers);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    recentLabel = new QLabel("Recently Played");
+    recentLabel = new QLabel("10 Most Recently Played Games");
     mainLayout->addWidget(recentLabel);
     mainLayout->addWidget(recentlyPlayed);
     totalLabel = new QLabel("Total Times (in Descending Order)");
@@ -36,12 +36,33 @@ ListsTab::~ListsTab(){
 }
 
 void ListsTab::updateBrowsers(){
+    QString recentsText = loadRecents();
+    recentlyPlayed->setPlainText(recentsText);
     QString totalsText = loadTotals();
     totalAmounts->setPlainText(totalsText);
 }
 
 QString ListsTab::loadRecents(){
-    return "";
+    QString records;
+    QFile file("./logs/recentslog.json");
+
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        // Parses json as a UTF-8 encoded JSON
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(file.readAll());
+        // Makes JSON data struct
+        QJsonObject jsonObject = jsonDocument.object();
+
+        for (auto it = jsonObject.begin(); it != jsonObject.end(); ++it)
+        {
+            QString gameName = it.value().toString();
+
+            // Concatenate the results into the QString
+            records += gameName + "\n";
+        }
+        file.close();
+    }
+    return records;
 }
 
 QString ListsTab::loadTotals(){

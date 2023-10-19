@@ -16,7 +16,6 @@ void NetworkRequestManager::sendSearchRequest(const QString& search)
 
     // Puts search query into full POST request body
     QString fullInput = QString("search \"%1\"; fields name; limit 500;").arg(search);
-    //qDebug() << fullInput;
 
     QByteArray postData{fullInput.toUtf8()};
 
@@ -27,8 +26,6 @@ void NetworkRequestManager::sendSearchRequest(const QString& search)
 
 void NetworkRequestManager::sendGameDetailsRequest(const QString& requestString)
 {
-    //qDebug() << requestString;
-
     // Construct and send the game details request
     const QUrl url("https://lnattp9ct5.execute-api.us-west-2.amazonaws.com/production/v4/games");
     request.setUrl(url);
@@ -41,7 +38,8 @@ void NetworkRequestManager::sendGameDetailsRequest(const QString& requestString)
     connect(reply, &QNetworkReply::finished, this, &NetworkRequestManager::handleDetailsReply);
 }
 
-void NetworkRequestManager::handleCovers(qint64 cover_ID){
+void NetworkRequestManager::handleCovers(qint64 cover_ID)
+{
     const QUrl url("https://lnattp9ct5.execute-api.us-west-2.amazonaws.com/production/v4/covers");
     request.setUrl(url);
 
@@ -52,7 +50,8 @@ void NetworkRequestManager::handleCovers(qint64 cover_ID){
     connect(reply, &QNetworkReply::finished, this, &NetworkRequestManager::handleCoverReply);
 }
 
-void NetworkRequestManager::handlePlatforms(QJsonArray platform_IDs){
+void NetworkRequestManager::handlePlatforms(QJsonArray platform_IDs)
+{
     const QUrl url("https://lnattp9ct5.execute-api.us-west-2.amazonaws.com/production/v4/platforms");
     request.setUrl(url);
 
@@ -65,12 +64,14 @@ void NetworkRequestManager::handlePlatforms(QJsonArray platform_IDs){
     }
 }
 
-void NetworkRequestManager::handleInvolvedCompanies(QJsonArray company_IDs){ // needed because IGDB is really stupid
+void NetworkRequestManager::handleInvolvedCompanies(QJsonArray company_IDs)
+{ // needed because IGDB is really stupid
     const QUrl url("https://lnattp9ct5.execute-api.us-west-2.amazonaws.com/production/v4/involved_companies");
     request.setUrl(url);
 
     QString requestString;
-    for (auto companyID : company_IDs){
+    for (auto companyID : company_IDs)
+    {
         requestString = QString("where id = %1; fields company;").arg(companyID.toInt());
         QByteArray postData{requestString.toUtf8()};
         QNetworkReply* reply = manager.post(request, postData);
@@ -78,7 +79,8 @@ void NetworkRequestManager::handleInvolvedCompanies(QJsonArray company_IDs){ // 
     }
 }
 
-void NetworkRequestManager::handleCompanies(){
+void NetworkRequestManager::handleCompanies()
+{
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     QJsonDocument jsonResponse = QJsonDocument::fromJson(reply->readAll());
     QJsonArray jsonArray = jsonResponse.array();
@@ -87,8 +89,10 @@ void NetworkRequestManager::handleCompanies(){
     request.setUrl(url);
 
     QString requestString;
-    for (auto value : jsonArray){
-        if (value.isObject()) {
+    for (auto value : jsonArray)
+    {
+        if (value.isObject())
+        {
             QJsonObject obj = value.toObject();
 
             qint64 company = obj["company"].toInt();
@@ -101,7 +105,8 @@ void NetworkRequestManager::handleCompanies(){
     }
 }
 
-void NetworkRequestManager::handleGenres(QJsonArray genre_IDs){
+void NetworkRequestManager::handleGenres(QJsonArray genre_IDs)
+{
     const QUrl url("https://lnattp9ct5.execute-api.us-west-2.amazonaws.com/production/v4/genres");
     request.setUrl(url);
 
@@ -150,7 +155,8 @@ void NetworkRequestManager::handleDetailsReply()
     }
 }
 
-void NetworkRequestManager::handleCoverReply(){
+void NetworkRequestManager::handleCoverReply()
+{
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     emit coverResult(reply->readAll());
 }

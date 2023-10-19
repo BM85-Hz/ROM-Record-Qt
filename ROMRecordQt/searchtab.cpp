@@ -46,7 +46,8 @@ SearchTab::SearchTab(QWidget *parent)
     setLayout(mainLayout);
 }
 
-SearchTab::~SearchTab(){
+SearchTab::~SearchTab()
+{
     delete searchLineEdit;
     delete resultListWidget;
     delete textBrowserWidget;
@@ -57,12 +58,11 @@ SearchTab::~SearchTab(){
 void SearchTab::handleSearchResult(const QByteArray& result)
 {
 
-    //qDebug() << "Received JSON response:" << result;
-
     // Parse the JSON response
     QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
 
-    if (!jsonResponse.isArray()) {
+    if (!jsonResponse.isArray())
+    {
         resultListWidget->addItem("Invalid JSON response.");
         return;
     }
@@ -70,19 +70,20 @@ void SearchTab::handleSearchResult(const QByteArray& result)
     // Extract the names into the JSON array
     QJsonArray jsonArray = jsonResponse.array();
     QStringList namesList;
-    for (const QJsonValue& value : jsonArray) {
+    for (const QJsonValue& value : jsonArray)
+    {
         if (value.isObject()) {
             QJsonObject obj = value.toObject();
 
-            if (obj.contains("id")) {
+            if (obj.contains("id"))
+            {
                 int gameId = obj["id"].toInt();
                 requestManager.gameIds.append(gameId);
-                //qDebug() << gameId;
             }
 
-            if (obj.contains("name")) {
+            if (obj.contains("name"))
+            {
                 namesList.append(obj["name"].toString());
-                //qDebug() << obj["name"].toString();
             }
         }
     }
@@ -90,12 +91,14 @@ void SearchTab::handleSearchResult(const QByteArray& result)
     // Clear the existing list items
     resultListWidget->clear();
 
-    if (namesList.isEmpty()){
+    if (namesList.isEmpty())
+    {
         resultListWidget->addItem("No titles found.");
     }
 
     // Add the names and ids to the list widget
-    for (int i = 0; i < namesList.size(); ++i) {
+    for (int i = 0; i < namesList.size(); ++i)
+    {
         QListWidgetItem* item = new QListWidgetItem(namesList[i]);
         item->setData(Qt::UserRole, requestManager.gameIds[i]); // Set the game id as custom data
         resultListWidget->addItem(item);
@@ -129,18 +132,18 @@ void SearchTab::requestGameDetails(const QString& gameId)
 
 void SearchTab::handleDetailsResult(const QByteArray& result)
 {
-    //qDebug() << "Received JSON response:" << result;
-
     // Parse the JSON response
     QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
-    if (!jsonResponse.isArray()) {
+    if (!jsonResponse.isArray())
+    {
         resultListWidget->addItem("Invalid JSON response.");
         return;
     }
 
     // Extract the details from the JSON array
     QJsonArray jsonArray = jsonResponse.array();
-    if (jsonArray.isEmpty()) {
+    if (jsonArray.isEmpty())
+    {
         resultListWidget->addItem("No data available.");
         return;
     }
@@ -149,19 +152,21 @@ void SearchTab::handleDetailsResult(const QByteArray& result)
     textBrowserWidget->clear();
 
     // Iterate over the JSON array and append details to the Text Browser
-    for (const QJsonValue& value : jsonArray) {
-        if (value.isObject()) {
+    for (const QJsonValue& value : jsonArray)
+    {
+        if (value.isObject())
+        {
             QJsonObject obj = value.toObject();
 
             QString name = obj["name"].toString();
             stopwatch->gameName = name;
             stopwatch->enable();
 
-            if (obj["cover"].toInt()){
+            if (obj["cover"].toInt())
+            {
                 qint64 cover_ID = obj["cover"].toInt();
                 requestManager.handleCovers(cover_ID);
-            }
-            else{
+            } else {
                 imageLabel->setText("No cover present");
             }
 
@@ -184,7 +189,8 @@ void SearchTab::handleDetailsResult(const QByteArray& result)
             //screenshots here
 
             // Format the information and append it to the Text Browser
-            if (!(platforms == QString())){ // Double click check (only works once before changing operation)
+            if (!(platforms == QString())) // Double click check (only works once before changing operation)
+            {
                 QString formattedInfo = QString("%1\n\nPlatforms:\n%2\nOriginal Release Date:\n%3\n\n"
                                                 "Companies:\n%4\nGenres:\n%5\nSummary:\n%6\n\n")
                                             .arg(name, platforms, first_release_date, companies, genres, summary);
@@ -194,8 +200,8 @@ void SearchTab::handleDetailsResult(const QByteArray& result)
                 platforms.clear();
                 companies.clear();
                 genres.clear();
-            }
-            else { textBrowserWidget->append("Click selected game title twice for complete details.");
+            } else {
+                textBrowserWidget->append("Click selected game title twice for complete details.");
                 textBrowserWidget->append("(If this doesn't work, then there is likely "
                                           "no info for this game on IGDB. Feel free to add some!)");
             }
@@ -203,16 +209,18 @@ void SearchTab::handleDetailsResult(const QByteArray& result)
     }
 }
 
-void SearchTab::handleCoverResult(const QByteArray& result){
+void SearchTab::handleCoverResult(const QByteArray& result)
+{
     QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
     QJsonArray jsonArray = jsonResponse.array();
     const QJsonValue& value = jsonArray.at(0);
-    if (value.isObject()) {
+
+    if (value.isObject())
+    {
         QJsonObject obj = value.toObject();
         QString url(obj["url"].toString());
         url = QString("https:%1").arg(url);
         url.replace("t_thumb", "t_cover_med");
-        //qDebug() << url;
 
         QNetworkAccessManager* imageManager = new QNetworkAccessManager(this);
         connect(imageManager, &QNetworkAccessManager::finished, this, &SearchTab::handleImageDownloaded);
@@ -221,7 +229,8 @@ void SearchTab::handleCoverResult(const QByteArray& result){
     }
 }
 
-void SearchTab::handleImageDownloaded(QNetworkReply* reply) {
+void SearchTab::handleImageDownloaded(QNetworkReply* reply)
+{
     if (reply->error() == QNetworkReply::NoError) {
         QByteArray imageData = reply->readAll();
         QPixmap pixmap;
@@ -229,40 +238,48 @@ void SearchTab::handleImageDownloaded(QNetworkReply* reply) {
 
         imageLabel->setPixmap(pixmap);
     } else {
-        qDebug() << "Error downloading the image:" << reply->errorString();
         imageLabel->setText("Image download failed");
     }
 
     reply->deleteLater();
 }
 
-void SearchTab::handlePlatformsResult(const QByteArray& result){
+void SearchTab::handlePlatformsResult(const QByteArray& result)
+{
     QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
     QJsonArray jsonArray = jsonResponse.array();
     const QJsonValue& value = jsonArray.at(0);
-    if (value.isObject()) {
+
+    if (value.isObject())
+    {
         QJsonObject obj = value.toObject();
         platforms.append(obj["name"].toString());
         platforms.append("\n");
     }
 }
 
-void SearchTab::handleCompaniesResult(const QByteArray& result){
+void SearchTab::handleCompaniesResult(const QByteArray& result)
+{
     QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
     QJsonArray jsonArray = jsonResponse.array();
     const QJsonValue& value = jsonArray.at(0);
-    if (value.isObject()) {
+
+    if (value.isObject())
+    {
         QJsonObject obj = value.toObject();
         companies.append(obj["name"].toString());
         companies.append("\n");
     }
 }
 
-void SearchTab::handleGenresResult(const QByteArray& result){
+void SearchTab::handleGenresResult(const QByteArray& result)
+{
     QJsonDocument jsonResponse = QJsonDocument::fromJson(result);
     QJsonArray jsonArray = jsonResponse.array();
     const QJsonValue& value = jsonArray.at(0);
-    if (value.isObject()) {
+
+    if (value.isObject())
+    {
         QJsonObject obj = value.toObject();
         genres.append(obj["name"].toString());
         genres.append("\n");

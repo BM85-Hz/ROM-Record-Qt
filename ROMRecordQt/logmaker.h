@@ -7,7 +7,6 @@
 #include <QDate>
 #include <QJsonObject>
 #include <QJsonDocument>
-#include <QRegularExpression>
 
 class LogMaker : public QObject
 {

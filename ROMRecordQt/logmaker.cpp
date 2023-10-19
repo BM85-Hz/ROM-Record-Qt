@@ -52,32 +52,32 @@ void LogMaker::saveToLogs(QString& game, qint64& clockTotal, QDate& startDate)
     if (file.open(QIODevice::ReadWrite  | QIODevice::Text))
     {
         // Parses json as a UTF-8 encoded JSON
-        QJsonDocument jsonDocument = QJsonDocument::fromJson(file.readAll());
+        QJsonDocument jsonDocument{QJsonDocument::fromJson(file.readAll())};
         // Makes JSON data struct
-        QJsonObject jsonObject = jsonDocument.object();
+        QJsonObject jsonObject{jsonDocument.object()};
         // Key values are dates
-        QString dateString = startDate.toString("yyyy-MM-dd");
+        QString dateString{startDate.toString("yyyy-MM-dd")};
 
         if (!jsonObject.contains(dateString)) {
             // Create a new date key with the game and time played if not already present
-            QString timestamp = timestampMaker(clockTotal);
+            QString timestamp{timestampMaker(clockTotal)};
             QJsonObject dateObject;
             dateObject[game] = timestamp;
             jsonObject[dateString] = dateObject;
         } else {
             // If the current date key exists
-            QJsonObject dateObject = jsonObject[dateString].toObject();
+            QJsonObject dateObject{jsonObject[dateString].toObject()};
 
             if (!dateObject.contains(game)) {
                 // Create a new game key with the time played if not present
-                QString timestamp = timestampMaker(clockTotal);
+                QString timestamp{timestampMaker(clockTotal)};
                 dateObject[game] = timestamp;
                 jsonObject[dateString] = dateObject;
             } else {
                 // If the game key already exists
-                QString prevTimeString = dateObject[game].toString();
+                QString prevTimeString{jsonObject[game].toString()};
 
-                QString timestamp = addPrevious(prevTimeString, clockTotal);
+                QString timestamp{addPrevious(prevTimeString, clockTotal)};
 
                 // Update the existing game key with the new time played
                 dateObject[game] = timestamp;
@@ -95,22 +95,74 @@ void LogMaker::saveToLogs(QString& game, qint64& clockTotal, QDate& startDate)
     if (file.open(QIODevice::ReadWrite | QIODevice::Text))
     {
         // Parses json as a UTF-8 encoded JSON
-        QJsonDocument jsonDocument = QJsonDocument::fromJson(file.readAll());
+        QJsonDocument jsonDocument{QJsonDocument::fromJson(file.readAll())};
         // Makes JSON data struct
-        QJsonObject jsonObject = jsonDocument.object();
+        QJsonObject jsonObject{jsonDocument.object()};
 
         if (!jsonObject.contains(game)) {
             // Create a new date key with the game and time played if not already present
-            QString timestamp = timestampMaker(clockTotal);
+            QString timestamp{timestampMaker(clockTotal)};
             jsonObject[game] = timestamp;
         } else {
             // If the game key already exists
-            QString prevTimeString = jsonObject[game].toString();
+            QString prevTimeString{jsonObject[game].toString()};
 
-            QString timestamp = addPrevious(prevTimeString, clockTotal);
+            QString timestamp{addPrevious(prevTimeString, clockTotal)};
 
             // Update the existing game key with the new time played
             jsonObject[game] = timestamp;
+        }
+
+        file.resize(0); // Clear the file content
+        // Write the updated JSON back to the file
+        file.write(QJsonDocument(jsonObject).toJson());
+        file.close();
+    }
+
+    file.setFileName("./logs/recentslog.json");
+    if (file.open(QIODevice::ReadWrite | QIODevice::Text))
+    {
+        // Parses json as a UTF-8 encoded JSON
+        QJsonDocument jsonDocument{QJsonDocument::fromJson(file.readAll())};
+        // Makes JSON data struct
+        QJsonObject jsonObject{jsonDocument.object()};
+
+        if (!jsonObject.contains("1")) { // Fills out file structure for first time use
+            for (qint64 i = 0; i < 10; ++i){
+                QString j{QString::number(i)};
+                jsonObject[j] = "";
+            }
+            jsonObject["0"] = game;
+        } else {
+            // Check if the new game is already present in the JSON object
+            bool isDuplicate = false;
+            qint64 duplicateIndex = -1;
+
+            for (qint64 i = 0; i < 10; ++i) {
+                QString j{QString::number(i)};
+                if (jsonObject[j] == game) {
+                    isDuplicate = true;
+                    duplicateIndex = i;
+                    break; // Breaks loop when duplicate is found
+                }
+            }
+
+            // If duplicate is not present, we start at the back of the JSON, and slide each item back
+            if (!isDuplicate) {
+                for (qint64 i = 9; i > 0; --i) {
+                    QString currentKey{QString::number(i)};
+                    QString previousKey{QString::number(i - 1)};
+                    jsonObject[currentKey] = jsonObject[previousKey].toString();
+                }
+                jsonObject["0"] = game;
+            } else { // Otherwise we start at where we found the duplicate and slide accordingly
+                for (qint64 i = duplicateIndex; i > 0; --i) {
+                    QString currentKey{QString::number(i)};
+                    QString previousKey{QString::number(i - 1)};
+                    jsonObject[currentKey] = jsonObject[previousKey].toString();
+                }
+                jsonObject["0"] = game;
+            }
         }
 
         file.resize(0); // Clear the file content

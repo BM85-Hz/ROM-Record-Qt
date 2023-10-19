@@ -11,7 +11,6 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
-#include <QDebug>
 
 // Remember to include logs folder with build
 
@@ -22,13 +21,7 @@ int main(int argc, char* argv[])
     QString directoryPath = "./logs";
     QDir directory;
     if (!directory.exists(directoryPath)) {
-        if (directory.mkpath(directoryPath)) {
-            qDebug() << "Directory created successfully";
-        } else {
-            qDebug() << "Failed to create directory";
-        }
-    } else {
-        qDebug() << "Directory already exists";
+        directory.mkpath(directoryPath);
     }
 
     QVarLengthArray<QString> fileList;
