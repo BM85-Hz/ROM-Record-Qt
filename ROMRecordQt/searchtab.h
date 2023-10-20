@@ -25,6 +25,7 @@ public:
     ~SearchTab();
 
 private slots:
+    void executeSearch();
     void handleSearchResult(const QByteArray& result);
     void handleSearchError(const QString& error);
     void handleDetailsResult(const QByteArray& result);
@@ -33,7 +34,6 @@ private slots:
     void handlePlatformsResult(const QByteArray& result);
     void handleCompaniesResult(const QByteArray& result);
     void handleGenresResult(const QByteArray& result);
-    void executeSearch();
     void requestGameDetails(const QString& gameId);
 
 private:

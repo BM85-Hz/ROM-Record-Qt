@@ -10,12 +10,14 @@ ListsTab::ListsTab(QWidget *parent)
     recentlyPlayed = new QTextBrowser;
     totalAmounts = new QTextBrowser;
 
+    // Watch the two list files to see if they've been changed and update accordingly
     QFileSystemWatcher* fileWatcher = new QFileSystemWatcher;
     fileWatcher->addPath("./logs/recentslog.json");
     fileWatcher->addPath("./logs/highestlog.json");
 
     connect(fileWatcher, &QFileSystemWatcher::fileChanged, this, &ListsTab::updateBrowsers);
 
+    // Make layout for tab
     QVBoxLayout* mainLayout = new QVBoxLayout;
     recentLabel = new QLabel("10 Most Recently Played Games");
     mainLayout->addWidget(recentLabel);
@@ -25,6 +27,7 @@ ListsTab::ListsTab(QWidget *parent)
     mainLayout->addWidget(totalAmounts);
     setLayout(mainLayout);
 
+    // Load in files at program start
     updateBrowsers();
 }
 
@@ -35,6 +38,9 @@ ListsTab::~ListsTab(){
     delete totalLabel;
 }
 
+// This could potentially be separated into two separate functions like
+// how the calendar tab does. However, considering that loading recents adds
+// a small file with 10 entries in it at most, I think this is fine for now
 void ListsTab::updateBrowsers(){
     QString recentsText = loadRecents();
     recentlyPlayed->setPlainText(recentsText);
@@ -42,6 +48,7 @@ void ListsTab::updateBrowsers(){
     totalAmounts->setPlainText(totalsText);
 }
 
+// Very simple load function as the file only needs to have the JSON values
 QString ListsTab::loadRecents(){
     QString records;
     QFile file("./logs/recentslog.json");
@@ -65,6 +72,10 @@ QString ListsTab::loadRecents(){
     return records;
 }
 
+// Much more in depth than the previous function, as JSONs are not sorted the
+// way I want (technically no standardized ordering if I recall, but Qt sorts
+// alphanumerically). As such I make a pair vector and have each timestamp compared
+// to sort them in descending order
 QString ListsTab::loadTotals(){
     QString records;
     QFile file("./logs/highestlog.json");
@@ -116,6 +127,8 @@ QString ListsTab::loadTotals(){
                                matchB.captured(2).toInt() * 60 + matchB.captured(3).toInt();
                 }
 
+                // Must be a greater than to sort in descending order,
+                // less than will make it asecnding
                 return secondsA > secondsB;
             }
         };

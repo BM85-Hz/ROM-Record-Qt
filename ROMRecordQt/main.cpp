@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
 
+    // Creates log directory if it doesn't already exist
     QString directoryPath = "./logs";
     QDir directory;
     if (!directory.exists(directoryPath)) {

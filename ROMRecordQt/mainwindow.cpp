@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     tabWidget = new QTabWidget;
+    tabWidget->setStyleSheet("background-color: #F2F2FF;");
     tabWidget->addTab(new SearchTab, tr("Search"));
     tabWidget->addTab(new CalendarTab, tr("Calendar"));
     tabWidget->addTab(new ListsTab, tr("Lists"));
@@ -20,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     mainLayout->addWidget(tabWidget);
     QWidget* centralWidget = new QWidget;
     centralWidget->setLayout(mainLayout);
+    centralWidget->setStyleSheet("background-color: #E9FAFF;");
     setCentralWidget(centralWidget);
 
     setWindowTitle(tr("ROM-Record"));

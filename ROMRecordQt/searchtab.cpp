@@ -55,6 +55,15 @@ SearchTab::~SearchTab()
     delete stopwatch;
 }
 
+void SearchTab::executeSearch()
+{
+    // Get the search query from the QLineEdit
+    QString searchQuery = searchLineEdit->text();
+
+    // Send the search request using the NetworkRequestManager
+    requestManager.sendSearchRequest(searchQuery);
+}
+
 void SearchTab::handleSearchResult(const QByteArray& result)
 {
 
@@ -70,6 +79,8 @@ void SearchTab::handleSearchResult(const QByteArray& result)
     // Extract the names into the JSON array
     QJsonArray jsonArray = jsonResponse.array();
     QStringList namesList;
+
+    // Gets the names and ids to display and send to details
     for (const QJsonValue& value : jsonArray)
     {
         if (value.isObject()) {
@@ -113,18 +124,11 @@ void SearchTab::handleSearchError(const QString& error)
     resultListWidget->addItem("Error: " + error);
 }
 
-void SearchTab::executeSearch()
-{
-    // Get the search query from the QLineEdit
-    QString searchQuery = searchLineEdit->text();
-
-    // Send the search request using the NetworkRequestManager
-    requestManager.sendSearchRequest(searchQuery);
-}
-
 void SearchTab::requestGameDetails(const QString& gameId)
 {
-    QString gameRequest = QString("where id = %1; fields name, cover, parent_game, genres, age_ratings, platforms, first_release_date, franchise, franchises, involved_companies, summary, screenshots;").arg(gameId);
+    QString gameRequest = QString("where id = %1; fields name, cover, parent_game, genres, age_ratings, "
+                                  "platforms, first_release_date, franchise, franchises, "
+                                  "involved_companies, summary, screenshots;").arg(gameId);
 
     // Send the game details request using the NetworkRequestManager
     requestManager.sendGameDetailsRequest(gameRequest);

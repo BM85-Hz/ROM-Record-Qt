@@ -1,5 +1,10 @@
 #include "networkrequestmanager.h"
 
+// This class is responsible for handling all of the requests from the Search Tab
+// It was also the first thing written for this program, so it's a bit rough
+
+// The headers here will also not be present in the release version
+
 NetworkRequestManager::NetworkRequestManager(QObject* parent) : QObject(parent)
 {
     connect(&manager, &QNetworkAccessManager::finished, this, &NetworkRequestManager::handleSearchReply);

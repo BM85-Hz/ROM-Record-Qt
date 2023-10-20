@@ -11,9 +11,13 @@ Stopwatch::Stopwatch(QWidget *parent)
 
     startButton = new QPushButton("Start");
     pauseButton = new QPushButton("Stop");
+    pauseButton->setStyleSheet("background-color: #FFD7D7;");
     discardButton = new QPushButton("Discard");
+    discardButton->setStyleSheet("background-color: #EBE4FF;");
     resumeButton = new QPushButton("Resume");
+    resumeButton->setStyleSheet("background-color: #E6FFE4;");
     saveButton = new QPushButton("Save");
+    saveButton->setStyleSheet("background-color: #EBE4FF;");
 
     // Add buttons to the stacked widget
     buttonStack->addWidget(startButton);
@@ -80,6 +84,7 @@ void Stopwatch::start()
     timer->start(1); // Iterates by millisecond
 }
 
+// Called stop in the program
 void Stopwatch::pause()
 {
     if (isRunning) {
@@ -102,7 +107,9 @@ void Stopwatch::resume()
 {
     if (!isRunning) {
         isRunning = true;
-        startTime = QDateTime::currentDateTime().addSecs(-elapsedTime / 1000); // Makes sure time actually resumes from the pause point
+
+        // Makes sure time actually resumes from the pause point
+        startTime = QDateTime::currentDateTime().addSecs(-elapsedTime / 1000);
         start();
     }
 }
@@ -117,6 +124,7 @@ void Stopwatch::save()
     }
 }
 
+// Updates the time label on screen
 void Stopwatch::updateTime()
 {
     if (isRunning) {
@@ -125,6 +133,8 @@ void Stopwatch::updateTime()
         int m = (elapsedTime / 1000 / 60) % 60;
         int s = (elapsedTime / 1000) % 60;
         //int ms = elapsedTime - (s * 1000) - (m * 60000) - (h * 3600000);
+
+        // Args take the variable, fieldwidth, base (decimal), and character (a '0'), in that order
         QString diff{QString("%1:%2:%3").
                        arg(h, 2, 10, zero).
                        arg(m, 2, 10, zero).

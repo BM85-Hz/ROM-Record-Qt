@@ -3,7 +3,9 @@
 CalendarTab::CalendarTab(QWidget *parent)
     : QWidget(parent)
 {
+    // Create objects for the Calendar Tab
     calendar = new QCalendarWidget;
+    calendar->setStyleSheet("color: #000000;");
     sessionLabel = new QLabel;
     sessionHistory = new QTextBrowser;
     sessionHistory->setPlaceholderText("No records for this date");
