@@ -3,7 +3,7 @@
 AboutTab::AboutTab(QWidget *parent)
     : QWidget(parent)
 {
-    topText = new QLabel("ROM-Record v1.0.0");
+    topText = new QLabel("ROM-Record v1.0.1");
     topText->setAlignment(Qt::AlignCenter);
     topText->setStyleSheet("font-size: 16pt; font-weight: bold;");
 

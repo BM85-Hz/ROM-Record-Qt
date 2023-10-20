@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(centralWidget);
 
     setWindowTitle(tr("ROM-Record"));
-    setWindowIcon(QIcon("./icon/icon.png"));
+    setWindowIcon(QIcon("icon.ico"));
 }
 
 MainWindow::~MainWindow()
