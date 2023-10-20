@@ -4,8 +4,11 @@ SearchTab::SearchTab(QWidget *parent)
     : QWidget(parent)
 {
     searchLineEdit = new QLineEdit(this);
+    searchLineEdit->setStyleSheet("background-color: #EAEBFF;");
     resultListWidget = new QListWidget(this);
+    resultListWidget->setStyleSheet("background-color: #EAEBFF;");
     textBrowserWidget = new QTextBrowser(this);
+    textBrowserWidget->setStyleSheet("background-color: #EAEBFF;");
     imageLabel = new QLabel(this);
     imageLabel->setText("No cover loaded");
     stopwatch = new Stopwatch;

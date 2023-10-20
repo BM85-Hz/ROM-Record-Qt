@@ -5,7 +5,9 @@ Stopwatch::Stopwatch(QWidget *parent)
 {
     // Create and configure the UI components
     timerLabel = new QLabel("00:00:00");
+    timerLabel->setAlignment(Qt::AlignCenter);
     currentSessionLabel = new QLabel("Currently Playing: Nothing Yet!");
+    currentSessionLabel->setAlignment(Qt::AlignCenter);
     buttonStack = new QStackedWidget;
     logmaker = new LogMaker;
 

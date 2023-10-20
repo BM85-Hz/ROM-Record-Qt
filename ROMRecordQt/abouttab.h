@@ -1,14 +1,19 @@
 #ifndef ABOUTTAB_H
 #define ABOUTTAB_H
 
-#include <QObject>
 #include <QWidget>
+#include <QLabel>
+#include <QHBoxLayout>
 
-class AboutTab
+class AboutTab : public QWidget
 {
-    Q_OBJECT
 public:
-    AboutTab();
+    AboutTab(QWidget *parent = nullptr);
+    ~AboutTab();
+private:
+    QLabel* topText;
+    QLabel* imageLabel;
+    QLabel* bottomText;
 };
 
 #endif // ABOUTTAB_H

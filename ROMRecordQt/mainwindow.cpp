@@ -3,6 +3,7 @@
 #include "searchtab.h"
 #include "calendartab.h"
 #include "liststab.h"
+#include "abouttab.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     tabWidget->addTab(new SearchTab, tr("Search"));
     tabWidget->addTab(new CalendarTab, tr("Calendar"));
     tabWidget->addTab(new ListsTab, tr("Lists"));
-    //tabWidget->addTab(new AboutTab, tr("About"));
+    tabWidget->addTab(new AboutTab, tr("About"));
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(tabWidget);
@@ -25,10 +26,11 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(centralWidget);
 
     setWindowTitle(tr("ROM-Record"));
+    setWindowIcon(QIcon("./icon/icon.png"));
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
     delete tabWidget;
+    delete ui;
 }

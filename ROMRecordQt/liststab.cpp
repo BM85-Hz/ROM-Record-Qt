@@ -8,7 +8,9 @@ ListsTab::ListsTab(QWidget *parent)
     : QWidget(parent)
 {
     recentlyPlayed = new QTextBrowser;
+    recentlyPlayed->setStyleSheet("background-color: #EAEBFF;");
     totalAmounts = new QTextBrowser;
+    totalAmounts->setStyleSheet("background-color: #EAEBFF;");
 
     // Watch the two list files to see if they've been changed and update accordingly
     QFileSystemWatcher* fileWatcher = new QFileSystemWatcher;
@@ -20,9 +22,11 @@ ListsTab::ListsTab(QWidget *parent)
     // Make layout for tab
     QVBoxLayout* mainLayout = new QVBoxLayout;
     recentLabel = new QLabel("10 Most Recently Played Games");
+    recentLabel->setAlignment(Qt::AlignCenter);
     mainLayout->addWidget(recentLabel);
     mainLayout->addWidget(recentlyPlayed);
     totalLabel = new QLabel("Total Times (in Descending Order)");
+    totalLabel->setAlignment(Qt::AlignCenter);
     mainLayout->addWidget(totalLabel);
     mainLayout->addWidget(totalAmounts);
     setLayout(mainLayout);
