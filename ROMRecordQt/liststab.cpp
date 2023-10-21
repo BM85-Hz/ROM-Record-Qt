@@ -8,9 +8,9 @@ ListsTab::ListsTab(QWidget *parent)
     : QWidget(parent)
 {
     recentlyPlayed = new QTextBrowser;
-    recentlyPlayed->setStyleSheet("background-color: #EAEBFF;");
+    recentlyPlayed->setStyleSheet("background-color: #F3F3F3;");
     totalAmounts = new QTextBrowser;
-    totalAmounts->setStyleSheet("background-color: #EAEBFF;");
+    totalAmounts->setStyleSheet("background-color: #F3F3F3;");
 
     // Watch the two list files to see if they've been changed and update accordingly
     QFileSystemWatcher* fileWatcher = new QFileSystemWatcher;

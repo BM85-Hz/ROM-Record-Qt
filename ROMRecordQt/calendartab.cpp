@@ -9,12 +9,12 @@ CalendarTab::CalendarTab(QWidget *parent)
     sessionLabel = new QLabel;
     sessionLabel->setAlignment(Qt::AlignCenter);
     sessionHistory = new QTextBrowser;
-    sessionHistory->setStyleSheet("background-color: #EAEBFF;");
+    sessionHistory->setStyleSheet("background-color: #F3F3F3;");
     sessionHistory->setPlaceholderText("No records for this date");
     noteLabel = new QLabel("Notes");
     noteLabel->setAlignment(Qt::AlignCenter);
     notesEditor = new QTextEdit;
-    notesEditor->setStyleSheet("background-color: #EAEBFF;");
+    notesEditor->setStyleSheet("background-color: #F3F3F3;");
     notesEditor->setPlaceholderText("Write something!");
 
     // Connect the calendar's selectionChanged signal to a slot to update sessionHistory and notesEditor

@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     tabWidget = new QTabWidget;
-    tabWidget->setStyleSheet("background-color: #F2F2FF;");
+    tabWidget->setStyleSheet("background-color: white;");
     tabWidget->addTab(new SearchTab, tr("Search"));
     tabWidget->addTab(new CalendarTab, tr("Calendar"));
     tabWidget->addTab(new ListsTab, tr("Lists"));

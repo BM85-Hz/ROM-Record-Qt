@@ -4,11 +4,11 @@ SearchTab::SearchTab(QWidget *parent)
     : QWidget(parent)
 {
     searchLineEdit = new QLineEdit(this);
-    searchLineEdit->setStyleSheet("background-color: #EAEBFF;");
+    searchLineEdit->setStyleSheet("background-color: #F3F3F3;");
     resultListWidget = new QListWidget(this);
-    resultListWidget->setStyleSheet("background-color: #EAEBFF;");
+    resultListWidget->setStyleSheet("background-color: #F3F3F3;");
     textBrowserWidget = new QTextBrowser(this);
-    textBrowserWidget->setStyleSheet("background-color: #EAEBFF;");
+    textBrowserWidget->setStyleSheet("background-color: #F3F3F3;");
     imageLabel = new QLabel(this);
     imageLabel->setText("No cover loaded");
     stopwatch = new Stopwatch;
@@ -196,7 +196,7 @@ void SearchTab::handleDetailsResult(const QByteArray& result)
             //screenshots here
 
             // Format the information and append it to the Text Browser
-            if (!(platforms == QString())) // Double click check (only works once before changing operation)
+            if (!(platforms == QString()) || !(companies == QString()) || !(genres == QString())) // Double click check (only works once before changing operation)
             {
                 QString formattedInfo = QString("%1\n\nPlatforms:\n%2\nOriginal Release Date:\n%3\n\n"
                                                 "Companies:\n%4\nGenres:\n%5\nSummary:\n%6\n\n")
