@@ -3,7 +3,7 @@
 AboutTab::AboutTab(QWidget *parent)
     : QWidget(parent)
 {
-    topText = new QLabel("ReplayRecord v1.0.2");
+    topText = new QLabel("ReplayRecord v1.0.3");
     topText->setAlignment(Qt::AlignCenter);
     topText->setStyleSheet("font-size: 16pt; font-weight: bold;");
 

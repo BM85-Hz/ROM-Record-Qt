@@ -35,6 +35,7 @@ FORMS += \
 QT += network
 
 RC_ICONS = myappico.ico
+VERSION = 1.0.3.0
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

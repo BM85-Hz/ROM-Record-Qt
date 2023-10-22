@@ -165,8 +165,8 @@ void SearchTab::handleDetailsResult(const QByteArray& result)
         {
             QJsonObject obj = value.toObject();
 
-            QString name = obj["name"].toString();
-            stopwatch->gameName = name;
+            name = obj["name"].toString();
+            stopwatch->gameName = nameBuf;
             stopwatch->enable();
 
             if (obj["cover"].toInt())
@@ -179,7 +179,7 @@ void SearchTab::handleDetailsResult(const QByteArray& result)
 
             qint64 unixTimestamp = obj["first_release_date"].toInt(); // Timestamp is in Unix Time
             QDateTime dateTime = QDateTime::fromSecsSinceEpoch(unixTimestamp);
-            QString first_release_date = dateTime.toString("yyyy-MM-dd");
+            firstReleaseDate = dateTime.toString("yyyy-MM-dd");
 
             QJsonArray platform_IDs = obj["platforms"].toArray();
             requestManager.handlePlatforms(platform_IDs);
@@ -192,7 +192,7 @@ void SearchTab::handleDetailsResult(const QByteArray& result)
             QJsonArray genre_IDs = obj["genres"].toArray();
             requestManager.handleGenres(genre_IDs);
 
-            QString summary = obj["summary"].toString();
+            summary = obj["summary"].toString();
             //screenshots here
 
             // Format the information and append it to the Text Browser
@@ -200,17 +200,26 @@ void SearchTab::handleDetailsResult(const QByteArray& result)
             {
                 QString formattedInfo = QString("%1\n\nPlatforms:\n%2\nOriginal Release Date:\n%3\n\n"
                                                 "Companies:\n%4\nGenres:\n%5\nSummary:\n%6\n\n")
-                                            .arg(name, platforms, first_release_date, companies, genres, summary);
+                                            .arg(nameBuf, platforms, firstReleaseDateBuf, companies, genres, summaryBuf);
                 textBrowserWidget->append(formattedInfo);
                 textBrowserWidget->verticalScrollBar()->setValue(0); // Set scroll bar to top
 
                 platforms.clear();
                 companies.clear();
                 genres.clear();
+                nameBuf = name;
+                firstReleaseDateBuf = firstReleaseDate;
+                summaryBuf = summary;
             } else {
                 textBrowserWidget->append("Click selected game title twice for complete details.");
                 textBrowserWidget->append("(If this doesn't work, then there is likely "
                                           "no info for this game on IGDB. Feel free to add some!)");
+
+                // Since platforms, companies, and genres are async, this further mitigates
+                // the double click functionality
+                nameBuf = name;
+                firstReleaseDateBuf = firstReleaseDate;
+                summaryBuf = summary;
             }
         }
     }
@@ -238,12 +247,17 @@ void SearchTab::handleCoverResult(const QByteArray& result)
 
 void SearchTab::handleImageDownloaded(QNetworkReply* reply)
 {
-    if (reply->error() == QNetworkReply::NoError) {
+    if (reply->error() == QNetworkReply::NoError && pixmapBuf.isNull()) {
         QByteArray imageData = reply->readAll();
-        QPixmap pixmap;
+        pixmap.loadFromData(imageData);
+        pixmapBuf = pixmap;
+    } else if (reply->error() == QNetworkReply::NoError) {
+        // Also part of the double click functionality
+        QByteArray imageData = reply->readAll();
         pixmap.loadFromData(imageData);
 
-        imageLabel->setPixmap(pixmap);
+        imageLabel->setPixmap(pixmapBuf);
+        pixmapBuf = pixmap;
     } else {
         imageLabel->setText("Image download failed");
     }

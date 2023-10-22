@@ -47,6 +47,14 @@ private:
     QString platforms{};
     QString companies{};
     QString genres{};
+    QString name{};
+    QString nameBuf{};
+    QString firstReleaseDate{};
+    QString firstReleaseDateBuf{};
+    QString summary{};
+    QString summaryBuf{};
+    QPixmap pixmap{};
+    QPixmap pixmapBuf{};
 };
 
 #endif // SEARCHTAB_H
