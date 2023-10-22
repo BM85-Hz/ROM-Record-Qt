@@ -2,9 +2,9 @@
 
 ## The ultimate activity log! Never lose track of your games again!
 
-Designed as a quick and efficient method of recording the time put into games and cataloging the resulting sessions. This desktop version was made using the Qt toolkit and is powered by Internet Games Database (IGDB) for its search features.
+Designed as a quick and efficient activity log tool for gaming sessions. This desktop version was made using the Qt toolkit and is powered by Internet Games Database (IGDB) for its search features.
 
-Start by searching a game you're looking to play and hit Start on the stopwatch when you start gaming.
+Start by searching a game you're looking to play. Click on it twice to load it in and then hit Start on the stopwatch to begin logging a play session. Search results also give basic details for each game, and searching while recording a gameplay session is possible.
 
 ![alt text](https://github.com/BM85-Hz/ReplayRecord-Qt/raw/main/Screenshot%201.png)
 
