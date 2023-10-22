@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     centralWidget->setStyleSheet("background-color: #E9FAFF;");
     setCentralWidget(centralWidget);
 
-    setWindowTitle(tr("ROM-Record"));
+    setWindowTitle(tr("ReplayRecord"));
     setWindowIcon(QIcon("icon.ico"));
 }
 
