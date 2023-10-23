@@ -5,6 +5,9 @@
 #include <QWidget>
 #include <QFileSystemWatcher>
 #include <QTextBrowser>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QString>
@@ -17,6 +20,7 @@ public:
     ~ListsTab();
 
 private slots:
+    void updateBrowsers();
     QString loadRecents();
     QString loadTotals();
 

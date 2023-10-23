@@ -14,6 +14,7 @@ class LogMaker : public QObject
 public:
     LogMaker();
     QString timestampMaker(qint64& time);
+    QString addPrevious(QString&, qint64&);
     void saveToLogs(QString& game, qint64& clockTotal, QDate& startDate);
 };
 

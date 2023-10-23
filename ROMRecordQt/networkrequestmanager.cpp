@@ -125,7 +125,7 @@ void NetworkRequestManager::handleSearchReply()
         }
         else
         {
-            emit searchError(reply->errorString());
+            emit searchError("Connection to IGDB host could not be completed.");
         }
 
         reply->deleteLater();
@@ -143,7 +143,7 @@ void NetworkRequestManager::handleDetailsReply()
         }
         else
         {
-            emit gameDetailsError(reply->errorString());
+            emit gameDetailsError("Connection to IGDB host could not be completed.");
         }
 
         reply->deleteLater();

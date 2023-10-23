@@ -4,7 +4,7 @@ CalendarTab::CalendarTab(QWidget *parent)
     : QWidget(parent)
 {
     calendar = new QCalendarWidget;
-    sessionLabel = new QLabel("Games Played");
+    sessionLabel = new QLabel;
     sessionHistory = new QTextBrowser;
     sessionHistory->setPlaceholderText("No records for this date");
     noteLabel = new QLabel("Notes");
@@ -59,6 +59,10 @@ void CalendarTab::updateSessions()
 
     // Set the play session text in the QTextBrowser
     sessionHistory->setPlainText(sessionText);
+
+    QString labelText = QString("Games Played on %1").
+                        arg(selectedDate.toString("dddd, MMMM d, yyyy"));
+    sessionLabel->setText(labelText);
 }
 
 void CalendarTab::updateNotes()
